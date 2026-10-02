@@ -1,1 +1,0 @@
-/* placeholder copied from app2.js by follow-up tree commit */
