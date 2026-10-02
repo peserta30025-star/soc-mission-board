@@ -34,6 +34,7 @@ function questionProgressHTML(q,revealed=false){return `<div class="question-pro
 
 function renderMission(){
   const {round,question,r,q}=questionAt();
+  const banner=document.querySelector('.round-banner'); if(banner)banner.dataset.round=String(r+1);
   $('#missionRoundTag').textContent=`ROUND ${r+1}`; $('#missionRoundName').textContent=round.name; $('#missionName').textContent=question.name; $('#difficultyBadge').textContent=round.difficulty;
   $('#questionProgress').innerHTML=questionProgressHTML(q,false);
   $('#questionText').textContent=question.question;
