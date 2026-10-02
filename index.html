@@ -58,12 +58,14 @@
 
 <section class="page" id="page-pretest">
   <div class="section-head"><div><div class="eyebrow">Pre-Test • Asesmen Diagnostik</div><h2>Pemetaan Kemampuan Awal</h2></div><p>Gunakan skor dari asesmen yang mewakili Network Society, interaksi nyata vs digital, serta Respect–Educate–Protect. Pre-test tidak sama dengan 9 Mission Questions.</p></div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Nilai Pre-Test</th><th>Kelompok</th><th>Kategori</th><th>Aksi</th></tr></thead><tbody id="preBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPre">+ Tambah Siswa</button><button class="btn primary" id="savePre">💾 Simpan Pre-Test</button></div></div>
+  <div class="grid two"><div class="card"><h3>Bank Pertanyaan Diagnostik</h3><ol id="preQuestionBank" class="question-bank"></ol><div class="notice mini">Kerjakan melalui LKPD/lembar asesmen, lalu masukkan skor akhirnya di tabel.</div></div><div class="card"><h3>Kategori Pemetaan</h3><p><b>0–59:</b> Perlu Penguatan</p><p><b>60–79:</b> Berkembang</p><p><b>80–100:</b> Sudah Memahami</p><div class="notice mini">Kategori digunakan untuk membantu guru merencanakan dukungan belajar, bukan ranking.</div></div></div>
+  <div class="card" style="margin-top:18px"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Nilai Pre-Test</th><th>Kelompok</th><th>Kategori</th><th>Aksi</th></tr></thead><tbody id="preBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPre">+ Tambah Siswa</button><button class="btn primary" id="savePre">💾 Simpan Pre-Test</button></div></div>
 </section>
 
 <section class="page" id="page-posttest">
   <div class="section-head"><div><div class="eyebrow">Post-Test • Hasil Belajar</div><h2>Ukur Perkembangan Pemahaman</h2></div><p>Gunakan indikator yang sama dengan pre-test dengan butir yang tidak harus identik. Data nama siswa dan kelompok mengikuti data yang sudah tersimpan.</p></div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Nilai Post-Test</th><th>Kelompok</th><th>Kategori</th><th>Aksi</th></tr></thead><tbody id="postBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPost">+ Tambah Siswa</button><button class="btn primary" id="savePost">💾 Simpan Post-Test</button><button class="btn cyan" data-go="evaluation">Lihat Evaluasi →</button></div></div>
+  <div class="card"><h3>Bank Pertanyaan Post-Test</h3><ol id="postQuestionBank" class="question-bank"></ol><div class="notice mini">Gunakan sebagai acuan asesmen hasil belajar. Skor kemudian dibandingkan otomatis dengan pre-test.</div></div>
+  <div class="card" style="margin-top:18px"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Pre-Test</th><th>Post-Test</th><th>Gain</th><th>Kelompok</th><th>Kategori Akhir</th><th>Aksi</th></tr></thead><tbody id="postBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPost">+ Tambah Siswa</button><button class="btn primary" id="savePost">💾 Simpan Post-Test</button><button class="btn cyan" data-go="evaluation">Lihat Evaluasi →</button></div></div>
 </section>
 
 <section class="page" id="page-board">
@@ -111,5 +113,6 @@
 <div class="toast" id="toast"></div>
 <script src="app1.js"></script>
 <script src="app2.js"></script>
+<script src="enhancements.js?v=5"></script>
 </body>
 </html>
