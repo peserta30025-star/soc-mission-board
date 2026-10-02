@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MISSION BOARD — Complete the Mission, Move Your Team Forward!</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="brand-badge">🧭</div><div>MISSION BOARD</div></div>
+  <div class="nav" id="nav">
+    <button data-go="home">Home</button><button data-go="board">Board</button><button data-go="setup">Teacher Setup</button><button data-go="pretest">Pre-Test</button><button data-go="posttest">Post-Test</button><button data-go="scoreboard">Scoreboard</button><button data-go="evaluation">Evaluation</button>
+  </div>
+</header>
+<main>
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Educational Adventure • SMP</div>
+      <h1>MISSION <span>BOARD</span></h1>
+      <div class="hero-subtitle">Media Permainan Pembelajaran Berbasis Mission Board</div>
+      <p><b>Complete the Mission, Move Your Team Forward!</b><br>Enam kelompok. Tiga round. Enam checkpoint. Satu petualangan belajar yang mengutamakan ketepatan, pemahaman, kolaborasi, dan progres nyata.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="startGameBtn">🚀 Mulai Permainan</button>
+        <button class="btn secondary" data-go="setup">⚙️ Pengaturan Guru</button>
+        <button class="btn secondary" data-go="pretest">🧠 Pre-Test</button>
+        <button class="btn secondary" data-go="posttest">📈 Post-Test</button>
+        <button class="btn secondary" data-go="scoreboard">🏆 Hasil</button>
+      </div>
+      <div class="notice" style="margin-top:24px;max-width:780px">💡 <b>LKPD = tempat berpikir & berdiskusi.</b> Website = game engine untuk menampilkan misi, mengunci jawaban, memvalidasi otomatis, menggerakkan pion, dan melacak progres.</div>
+    </div>
+    <div class="hero-map">
+      <img id="heroVisual" alt="SOC Mission Board Adventure" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:2;">
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-setup">
+  <div class="section-head"><div><div class="eyebrow">Teacher Setup</div><h2>Bangun Petualangan Belajarmu</h2></div><p>Semua isi misi dapat diubah. Struktur permainan tetap 3 round × 2 checkpoint agar alur papan konsisten.</p></div>
+  <div class="grid two">
+    <div class="card"><h3>Identitas Permainan</h3>
+      <div class="field"><label class="label">Nama permainan</label><input id="cfgGameName"></div>
+      <div class="grid two"><div class="field"><label class="label">Mata pelajaran</label><input id="cfgSubject"></div><div class="field"><label class="label">Kelas</label><input id="cfgClass"></div></div>
+      <div class="field"><label class="label">Materi</label><input id="cfgTopic"></div>
+      <div class="field"><label class="label">Tujuan pembelajaran</label><textarea id="cfgObjective"></textarea></div>
+    </div>
+    <div class="card"><h3>6 Kelompok</h3><div id="teamNameInputs" class="grid two"></div><div class="notice mini" style="margin-top:10px">Warna pion tetap berbeda agar mudah dibaca dari proyektor.</div></div>
+  </div>
+  <div id="missionEditors" class="grid three" style="margin-top:18px"></div>
+  <div class="card" style="margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><div><b>Simpan konfigurasi</b><div class="muted mini">Data tersimpan di browser perangkat ini.</div></div><div style="display:flex;gap:10px"><button class="btn danger" id="resetConfigBtn">Reset Default</button><button class="btn primary" id="saveConfigBtn">💾 Simpan Pengaturan</button></div></div>
+</section>
+
+<section class="page" id="page-pretest">
+  <div class="section-head"><div><div class="eyebrow">Pre-Test • TaRL Mapping</div><h2>Pemetaan Kemampuan Awal</h2></div><p>Masukkan nama siswa, nilai pre-test, dan pembagian kelompok. Data yang sama akan dipakai untuk membandingkan post-test.</p></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Nilai Pre-Test</th><th>Kelompok</th><th>Aksi</th></tr></thead><tbody id="preBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPre">+ Tambah Siswa</button><button class="btn primary" id="savePre">💾 Simpan Pre-Test</button></div></div>
+</section>
+
+<section class="page" id="page-posttest">
+  <div class="section-head"><div><div class="eyebrow">Post-Test</div><h2>Ukur Perubahan Hasil Belajar</h2></div><p>Masukkan nilai setelah permainan. Nama siswa dan kelompok mengikuti data pre-test bila sudah tersedia.</p></div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>#</th><th>Nama Siswa</th><th>Nilai Post-Test</th><th>Kelompok</th><th>Aksi</th></tr></thead><tbody id="postBody"></tbody></table></div><div class="test-actions"><button class="btn secondary" id="addStudentPost">+ Tambah Siswa</button><button class="btn primary" id="savePost">💾 Simpan Post-Test</button><button class="btn cyan" data-go="evaluation">Lihat Evaluasi →</button></div></div>
+</section>
+
+<section class="page" id="page-board">
+  <div class="section-head"><div><div class="eyebrow">Adventure Map</div><h2 id="boardGameTitle">Mission Board</h2></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="resetRunBtn">↺ Reset Run</button><button class="btn primary" id="boardNextBtn">Mulai Misi →</button></div></div>
+  <div class="board-layout"><div class="board" id="board"></div><div class="card"><h3 style="margin-bottom:12px">TEAM PROGRESS</h3><div class="progress-panel" id="progressPanel"></div><div class="notice mini" style="margin-top:14px">Pion bergerak <b>independen</b>. Hanya kelompok dengan jawaban benar yang maju satu posisi.</div></div></div>
+</section>
+
+<section class="page" id="page-mission">
+  <div class="round-banner"><div><div class="eyebrow" id="missionRoundTag">ROUND 1</div><h2 id="missionRoundName">Local Wisdom Explorer</h2><div class="muted" id="missionName">Mission 1</div></div><div class="difficulty" id="difficultyBadge">⭐ EXPLORER • BASIC</div></div>
+  <div class="grid two"><div class="card"><span class="label">🎯 Mission Brief</span><div class="question-box" id="questionText"></div><div id="questionOptions" class="option-list"></div></div><div class="card"><h3>Operator Guide</h3><p class="muted">1) Siswa berdiskusi di LKPD. 2) Operator memasukkan jawaban tiap kelompok. 3) Tekan <b>Lock Answer</b>. 4) Setelah semua terkunci, Reveal Answer aktif.</p><div class="notice mini">Jawaban kelompok disembunyikan setelah dikunci agar kelompok lain tidak meniru.</div></div></div>
+  <div id="teamAnswers" class="team-inputs"></div>
+  <div class="reveal-bar"><div><b id="lockCounter">0 / 6 ANSWER LOCKED</b><div class="muted mini">Kunci semua jawaban sebelum reveal.</div></div><button class="btn primary" id="revealBtn" disabled>🔍 REVEAL ANSWER</button></div>
+</section>
+
+<section class="page" id="page-result">
+  <div class="section-head"><div><div class="eyebrow">Answer Revealed</div><h2>Hasil Misi</h2></div><button class="btn primary" id="goBoardAfterResult">🗺️ Go to Mission Board</button></div>
+  <div class="card" style="margin-bottom:16px"><span class="label">Correct Answer</span><div class="big-answer" id="correctAnswerDisplay">B</div><div class="muted" id="answerExplanation"></div></div>
+  <div id="resultGrid" class="result-grid"></div>
+</section>
+
+<section class="page" id="page-scoreboard">
+  <div class="section-head"><div><div class="eyebrow">Scoreboard</div><h2>SOC Champion Race</h2></div><p>Total skor menjadi dasar hasil akhir. Kecepatan tidak digunakan sebagai penentu utama.</p></div>
+  <div class="card"><div class="table-wrap scoreboard"><table><thead><tr><th>Rank</th><th>Kelompok</th><th>Round 1</th><th>Round 2</th><th>Round 3</th><th>Final Mission</th><th>Total</th><th>Checkpoint</th></tr></thead><tbody id="scoreBody"></tbody></table></div></div>
+  <div class="card" style="margin-top:18px"><h3>Champion Flash Pitch (opsional)</h3><p class="muted mini">Masukkan skor performa 0–10 bila presentasi akhir dilakukan. Ini satu-satunya bagian yang dapat dinilai guru secara manual karena merupakan penilaian performa.</p><div id="flashInputs" class="grid three"></div><button class="btn primary" id="saveFlash" style="margin-top:14px">Simpan Skor Flash Pitch</button></div>
+</section>
+
+<section class="page" id="page-evaluation">
+  <div class="section-head"><div><div class="eyebrow">Evaluation</div><h2>Pre-Test vs Post-Test</h2></div><p>Ringkasan sederhana untuk melihat perubahan hasil belajar setelah penggunaan Mission Board.</p></div>
+  <div id="evalMetrics" class="grid four" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px"></div>
+  <div class="card" style="margin-top:18px"><h3>Perbandingan Per Siswa</h3><div id="evalChart"></div></div>
+</section>
+</main>
+</div>
+<div class="mission-complete" id="celebration"><div class="celebrate"><div style="font-size:4rem">🏆</div><h2 id="celebrateTitle">MISSION COMPLETE!</h2><p id="celebrateText" class="muted"></p><button class="btn primary" id="closeCelebrate">Continue</button></div></div>
+<div class="toast" id="toast"></div>
+<script src="img1.js"></script>
+<script src="img2.js"></script>
+<script src="img3.js"></script>
+<script src="img4.js"></script>
+<script src="hero.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
