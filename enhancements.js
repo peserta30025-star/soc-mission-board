@@ -33,6 +33,25 @@
     if(typeof saveConfig==='function')saveConfig();
   }
 
+  function loadCrispHero(){
+    const hero=document.querySelector('.hero-map img');
+    if(!hero)return;
+    window.__heroHQ=[];
+    const files=Array.from({length:10},(_,i)=>`hq${String(i+1).padStart(2,'0')}.js`);
+    let i=0;
+    const next=()=>{
+      if(i>=files.length){
+        if(window.__heroHQ.length===files.length){
+          hero.src='data:image/webp;base64,'+window.__heroHQ.join('');
+          hero.style.width='100%';hero.style.height='100%';hero.style.maxWidth='none';hero.style.maxHeight='none';hero.style.objectFit='contain';
+        }
+        return;
+      }
+      const s=document.createElement('script');s.src=files[i++]+'?v=2';s.onload=next;s.onerror=()=>{};document.head.appendChild(s);
+    };
+    next();
+  }
+
   function fillQuestionBank(kind){
     const target=document.querySelector(kind==='pre'?'#preQuestionBank':'#postQuestionBank');
     if(!target)return;
@@ -74,5 +93,6 @@
 
   fillQuestionBank('pre');
   fillQuestionBank('post');
+  loadCrispHero();
   if(document.querySelector('#page-board.active'))renderBoard();
 })();
