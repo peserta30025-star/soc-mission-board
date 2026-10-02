@@ -1,87 +1,190 @@
-const TEAM_COLORS=['#4aa3ff','#56df9b','#ffd166','#ff6b6b','#b990ff','#ff9f43'];
-const PASS_CORRECT=2;
-const QUESTIONS_PER_CHECKPOINT=3;
+const TEAM_COLORS_DEFAULT=['#4aa3ff','#56df9b','#ffd166','#ff6b6b','#b990ff','#ff9f43'];
+const QUESTIONS_PER_ROUND=3;
+const STORAGE_VERSION='v4_digital_society';
+
 const DEFAULT_CONFIG={
- gameName:'SOC Mission Board',subject:'IPS',className:'IX',topic:'Kearifan Lokal di Tengah Arus Modernisasi dan Globalisasi',objective:'Menganalisis konsep dan nilai kearifan lokal, perubahan akibat modernisasi dan globalisasi, serta mengevaluasi strategi pelestarian yang relevan.',
- teams:['Kelompok 1','Kelompok 2','Kelompok 3','Kelompok 4','Kelompok 5','Kelompok 6'],
- rounds:[
-  {name:'LOCAL WISDOM EXPLORER',subtitle:'THE BEGINNING',difficulty:'⭐ EXPLORER • BASIC',missions:[
-   {name:'CHECKPOINT 1 — KENALI KONSEPNYA',questions:[
-    {name:'CONCEPT CLUE',type:'mcq',question:'Pernyataan yang paling tepat menjelaskan kearifan lokal adalah ...',options:['A. Semua kebiasaan lama yang dilakukan masyarakat tanpa mempertimbangkan fungsinya','B. Pengetahuan, nilai, dan praktik yang berkembang dalam masyarakat serta digunakan untuk menjawab kebutuhan dan kondisi lingkungannya','C. Aturan pemerintah pusat yang berlaku sama di seluruh daerah','D. Tren baru yang cepat menyebar melalui media digital'],answer:'B',score:5,explanation:'Kearifan lokal bukan sekadar kebiasaan lama, tetapi pengetahuan, nilai, dan praktik yang tumbuh dalam masyarakat dan memiliki fungsi bagi kehidupan mereka.'},
-    {name:'PAIR THE HERITAGE',type:'matching',question:'Cocokkan bentuk kearifan lokal berikut dengan daerah yang tepat.',options:['1. Subak','2. Sasi','3. Mapalus'],matchOptions:['A. Bali','B. Maluku','C. Minahasa, Sulawesi Utara'],answer:'A|B|C',score:5,explanation:'Subak berkembang di Bali, Sasi dikenal di Maluku, dan Mapalus merupakan tradisi gotong royong masyarakat Minahasa.'},
-    {name:'TRUE OR TRAP?',type:'truefalse',question:'BENAR atau SALAH: Semua tradisi yang diwariskan turun-temurun otomatis dapat disebut kearifan lokal, meskipun tidak memiliki nilai, fungsi sosial, atau hubungan dengan kehidupan masyarakat.',options:[],answer:'SALAH',score:5,explanation:'Warisan turun-temurun saja belum cukup. Kearifan lokal berkaitan dengan nilai, pengetahuan, fungsi sosial, dan cara masyarakat beradaptasi dengan lingkungannya.'}
-   ]},
-   {name:'CHECKPOINT 2 — NILAI & FUNGSI',questions:[
-    {name:'VALUE DETECTOR',type:'mcq',question:'Sebuah masyarakat adat membatasi waktu dan jumlah pengambilan hasil hutan agar sumber daya tetap tersedia bagi generasi berikutnya. Nilai yang paling kuat tampak adalah ...',options:['A. Konsumerisme dan persaingan','B. Individualisme dan kebebasan tanpa batas','C. Tanggung jawab bersama dan pelestarian lingkungan','D. Orientasi keuntungan jangka pendek'],answer:'C',score:5,explanation:'Pembatasan pemanfaatan sumber daya menunjukkan tanggung jawab komunal dan upaya menjaga keberlanjutan lingkungan.'},
-    {name:'MATCH THE VALUE',type:'matching',question:'Cocokkan nilai kearifan lokal dengan contoh perilakunya.',options:['1. Gotong royong','2. Musyawarah','3. Pelestarian lingkungan'],matchOptions:['A. Menetapkan zona yang tidak boleh dieksploitasi secara berlebihan','B. Bekerja bersama memperbaiki fasilitas kampung','C. Membahas masalah bersama untuk mencapai kesepakatan'],answer:'B|C|A',score:5,explanation:'Gotong royong menekankan kerja bersama, musyawarah menekankan pengambilan keputusan bersama, dan pelestarian lingkungan menjaga pemanfaatan sumber daya secara berkelanjutan.'},
-    {name:'ADAPT OR FREEZE?',type:'truefalse',question:'BENAR atau SALAH: Agar tetap asli, kearifan lokal harus selalu dipraktikkan persis seperti masa lalu dan tidak boleh menyesuaikan cara penyampaiannya dengan perkembangan zaman.',options:[],answer:'SALAH',score:5,explanation:'Cara penyampaian dapat beradaptasi dengan zaman selama nilai inti dan makna utamanya tetap dijaga.'}
-   ]}
-  ]},
-  {name:'CHANGE CHALLENGE',subtitle:'THE CHALLENGE',difficulty:'⭐⭐ CHALLENGER • INTERMEDIATE',missions:[
-   {name:'CHECKPOINT 1 — MODERNISASI',questions:[
-    {name:'CAUSE ANALYZER',type:'mcq',question:'Di sebuah desa, remaja semakin jarang mengikuti kegiatan adat. Mereka lebih banyak beraktivitas di kota, menggunakan media digital, dan menganggap tradisi kurang sesuai dengan gaya hidup sekarang. Analisis penyebab yang paling lengkap adalah ...',options:['A. Perubahan pola hidup, mobilitas sosial, dan arus informasi dari teknologi','B. Hanya karena lokasi desa jauh dari pusat kota','C. Hanya karena jumlah penduduk bertambah','D. Karena semua bentuk modernisasi pasti menghapus kebudayaan'],answer:'A',score:10,explanation:'Perubahan gaya hidup, mobilitas, dan arus informasi merupakan faktor yang saling berkaitan dalam perubahan sosial budaya.'},
-    {name:'CHANGE & IMPACT',type:'matching',question:'Cocokkan perubahan dengan dampak yang paling mungkin terjadi.',options:['1. Promosi tradisi melalui media digital','2. Gaya hidup konsumtif semakin dominan','3. Penggunaan teknologi menggantikan sebagian pekerjaan tradisional'],matchOptions:['A. Sebagian nilai lokal berisiko tersisih oleh orientasi konsumsi','B. Pola kerja masyarakat mengalami perubahan','C. Tradisi dapat dikenal oleh khalayak yang lebih luas'],answer:'C|A|B',score:10,explanation:'Teknologi dapat memberi peluang promosi, tetapi perubahan gaya hidup dan pola kerja juga dapat memengaruhi keberlanjutan praktik lokal.'},
-    {name:'MODERNIZATION CHECK',type:'truefalse',question:'BENAR atau SALAH: Modernisasi selalu berdampak negatif terhadap kearifan lokal sehingga satu-satunya cara melestarikannya adalah menolak seluruh teknologi baru.',options:[],answer:'SALAH',score:10,explanation:'Modernisasi dapat menjadi tantangan sekaligus peluang. Teknologi dapat digunakan untuk dokumentasi, pendidikan, promosi, dan inovasi tanpa menghilangkan nilai inti.'}
-   ]},
-   {name:'CHECKPOINT 2 — GLOBALISASI & ADAPTASI',questions:[
-    {name:'GLOBALIZATION CASE',type:'mcq',question:'Sebuah festival adat menjadi populer sebagai atraksi wisata. Pendapatan warga meningkat, tetapi beberapa bagian ritual mulai diubah hanya agar lebih menarik bagi pengunjung. Kesimpulan paling kritis adalah ...',options:['A. Pariwisata selalu merusak budaya sehingga harus dihentikan','B. Selama menghasilkan uang, perubahan makna ritual tidak perlu dipersoalkan','C. Komersialisasi dapat memberi manfaat ekonomi, tetapi perlu batas agar makna dan kontrol masyarakat lokal tidak hilang','D. Tradisi sebaiknya sepenuhnya disesuaikan dengan selera wisatawan'],answer:'C',score:10,explanation:'Pemanfaatan ekonomi dapat dilakukan, tetapi masyarakat lokal perlu tetap mengontrol makna, batas perubahan, dan nilai inti tradisi.'},
-    {name:'CHALLENGE → SOLUTION',type:'matching',question:'Cocokkan tantangan pelestarian dengan solusi yang paling tepat.',options:['1. Pengetahuan tradisi belum terdokumentasi','2. Generasi muda kurang tertarik','3. Produk budaya lokal banyak ditiru tanpa melibatkan masyarakat asal'],matchOptions:['A. Membuat arsip digital dan dokumentasi yang melibatkan tokoh adat','B. Mengembangkan pembelajaran kreatif dan memberi ruang generasi muda menjadi pelaku','C. Memperkuat identitas produk, perlindungan, dan peran komunitas dalam pemanfaatannya'],answer:'A|B|C',score:10,explanation:'Solusi harus sesuai akar masalah: dokumentasi untuk risiko hilangnya pengetahuan, pelibatan untuk regenerasi, dan perlindungan komunitas untuk pemanfaatan yang adil.'},
-    {name:'DIGITAL WISDOM',type:'truefalse',question:'BENAR atau SALAH: Penggunaan media sosial untuk mengenalkan tradisi lokal pasti bertentangan dengan pelestarian budaya karena media sosial merupakan produk globalisasi.',options:[],answer:'SALAH',score:10,explanation:'Media digital dapat menjadi alat pelestarian jika isi, makna, dan representasinya tetap dikendalikan dengan bertanggung jawab.'}
-   ]}
-  ]},
-  {name:'HERITAGE RESCUE',subtitle:'THE FINAL QUEST',difficulty:'⭐⭐⭐ MASTER • ADVANCED',missions:[
-   {name:'CHECKPOINT 1 — EVALUASI STRATEGI',questions:[
-    {name:'POLICY DECISION',type:'mcq',question:'Sebuah wilayah adat memiliki aturan pembatasan pembukaan hutan. Investor menawarkan proyek ekonomi yang menjanjikan lapangan kerja, tetapi membutuhkan pembukaan lahan cukup luas. Keputusan yang paling mencerminkan keseimbangan pembangunan dan kearifan lokal adalah ...',options:['A. Menerima seluruh rencana investor karena lapangan kerja selalu lebih penting','B. Menolak semua kegiatan ekonomi baru tanpa kajian','C. Melakukan musyawarah, kajian dampak lingkungan, menetapkan batas pemanfaatan, dan memastikan aturan adat serta kepentingan masyarakat tetap menjadi dasar keputusan','D. Menghapus aturan adat agar investasi lebih mudah'],answer:'C',score:15,explanation:'Pilihan C mempertimbangkan ekonomi, lingkungan, partisipasi masyarakat, dan keberlanjutan nilai lokal sekaligus.'},
-    {name:'SUSTAINABILITY SIGNAL',type:'matching',question:'Cocokkan indikator keberlanjutan kearifan lokal dengan bukti yang tepat.',options:['1. Regenerasi','2. Relevansi ekonomi','3. Keberlanjutan ekologis'],matchOptions:['A. Praktik lokal tetap menjaga daya dukung lingkungan','B. Generasi muda memahami dan mampu meneruskan praktik serta maknanya','C. Masyarakat memperoleh manfaat ekonomi tanpa kehilangan kontrol atas tradisinya'],answer:'B|C|A',score:15,explanation:'Keberlanjutan tidak hanya berarti tradisi masih ada, tetapi juga diwariskan, bermanfaat secara adil, dan menjaga lingkungan.'},
-    {name:'SUCCESS OR ILLUSION?',type:'truefalse',question:'BENAR atau SALAH: Program pelestarian dapat disebut berhasil hanya karena jumlah wisatawan meningkat, walaupun masyarakat lokal sudah tidak lagi menentukan bagaimana tradisi dijalankan dan dimaknai.',options:[],answer:'SALAH',score:15,explanation:'Keberhasilan pelestarian juga harus melihat kontrol masyarakat, makna budaya, regenerasi, dan keberlanjutan—bukan hanya jumlah pengunjung.'}
-   ]},
-   {name:'CHECKPOINT 2 — FINAL RESCUE',questions:[
-    {name:'FINAL SCENARIO',type:'mcq',question:'Sebuah desa ingin menjadikan upacara adat sebagai konten digital agar dikenal luas. Strategi paling tepat adalah ...',options:['A. Merekam seluruh bagian upacara tanpa izin karena tujuan promosi dianggap cukup','B. Menentukan bersama bagian yang boleh dipublikasikan, melibatkan tokoh adat dan generasi muda, menjelaskan konteks makna, serta melindungi bagian yang bersifat sakral','C. Mengubah seluruh rangkaian upacara agar lebih singkat dan viral','D. Menyerahkan seluruh produksi kepada pihak luar tanpa keterlibatan masyarakat'],answer:'B',score:15,explanation:'Pelestarian digital perlu persetujuan komunitas, konteks yang benar, pelibatan generasi muda, dan perlindungan unsur sakral.'},
-    {name:'WHO DOES WHAT?',type:'matching',question:'Cocokkan pihak dengan peran paling tepat dalam program pelestarian.',options:['1. Generasi muda','2. Tokoh adat / pelaku budaya','3. Sekolah dan pemerintah lokal'],matchOptions:['A. Memfasilitasi pendidikan, ruang kegiatan, dan dukungan kebijakan','B. Mengembangkan dokumentasi serta komunikasi digital yang kreatif','C. Memastikan ketepatan makna, nilai, dan batas-batas budaya'],answer:'B|C|A',score:15,explanation:'Pelestarian membutuhkan pembagian peran: generasi muda sebagai penggerak kreatif, tokoh adat sebagai penjaga makna, dan lembaga sebagai fasilitator.'},
-    {name:'ACTION PLAN LOGIC',type:'mcq',question:'Urutan berpikir yang paling logis untuk menyusun rencana pelestarian berbasis masalah adalah ...',options:['A. Aksi → solusi → dampak → penyebab → masalah','B. Solusi → masalah → aksi → penyebab → dampak','C. Identifikasi masalah → analisis penyebab → analisis dampak → tentukan solusi → susun aksi','D. Dampak → aksi → masalah → solusi → penyebab'],answer:'C',score:15,explanation:'Rencana yang kuat dimulai dari identifikasi masalah, memahami penyebab dan dampak, lalu menentukan solusi dan aksi yang sesuai.'}
-   ]}
-  ]}
- ]
+  gameName:'SOC Mission Board',
+  subject:'IPS',
+  className:'IX',
+  topic:'Interaksi Masyarakat Abad ke-21',
+  objective:'Memahami masyarakat jaringan, membedakan interaksi dunia nyata dan dunia digital, menganalisis bentuk interaksi di era digital, serta menerapkan prinsip Respect, Educate, dan Protect secara bertanggung jawab.',
+  videoSrc:'assets/video/digital-case.mp4',
+  videoPoster:'hero-visual.webp',
+  teams:['Kelompok 1','Kelompok 2','Kelompok 3','Kelompok 4','Kelompok 5','Kelompok 6'],
+  teamColors:[...TEAM_COLORS_DEFAULT],
+  rounds:[
+    {
+      name:'ENTER THE NETWORK',
+      focus:'Masyarakat Jaringan / Network Society',
+      difficulty:'🟢 LEVEL 1 • UNDERSTAND & IDENTIFY',
+      questions:[
+        {
+          name:'CONNECTED SOCIETY', type:'single-choice', score:10,
+          question:'Kelas IX membuat proyek bersama dengan siswa dari sekolah lain. Mereka membagi tugas melalui grup chat, mengedit dokumen bersama secara daring, dan melakukan rapat video. Ciri masyarakat jaringan yang paling jelas pada situasi tersebut adalah ...',
+          options:['A. Hubungan sosial hanya terjadi jika orang bertemu langsung','B. Interaksi dan kerja sama terhubung melalui jaringan komunikasi digital','C. Teknologi membuat manusia tidak lagi membutuhkan kelompok sosial','D. Semua hubungan masyarakat menjadi bersifat pribadi'],
+          answer:'B',
+          explanation:'Masyarakat jaringan ditandai oleh hubungan dan aktivitas sosial yang terhubung melalui jaringan informasi dan komunikasi. Teknologi memungkinkan orang berinteraksi dan bekerja sama meskipun tidak berada di tempat yang sama.'
+        },
+        {
+          name:'NETWORK CHECK', type:'true-false', score:10,
+          question:'Benar atau Salah: Dalam masyarakat jaringan, hubungan sosial dapat terbentuk dan dipertahankan melampaui batas ruang karena didukung teknologi informasi dan komunikasi.',
+          options:['BENAR','SALAH'], answer:'BENAR',
+          explanation:'Pernyataan ini benar. Jaringan digital memungkinkan komunikasi dan pertukaran informasi berlangsung lintas tempat dan waktu, sehingga hubungan sosial tidak selalu bergantung pada pertemuan fisik.'
+        },
+        {
+          name:'MATCH THE NETWORK', type:'matching', score:10,
+          question:'Cocokkan karakteristik masyarakat jaringan dengan contoh yang paling tepat.',
+          options:['1. Terhubung melalui jaringan','2. Informasi bergerak cepat','3. Kerja sama tidak dibatasi lokasi'],
+          matchOptions:['A. Siswa di Bandung dan Surabaya menyusun presentasi pada dokumen daring yang sama','B. Pengumuman kegiatan sekolah tersebar ke seluruh kelas melalui grup dalam beberapa menit','C. Anggota komunitas saling berkomunikasi melalui platform digital'],
+          answer:['C','B','A'],
+          explanation:'Jaringan digital menghubungkan orang, mempercepat arus informasi, dan memungkinkan kerja sama berlangsung tanpa harus berada di lokasi yang sama.'
+        }
+      ]
+    },
+    {
+      name:'DIGITAL INTERACTION',
+      focus:'Interaksi masyarakat di dunia nyata dan dunia digital',
+      difficulty:'🟠 LEVEL 2 • COMPARE & ANALYZE',
+      questions:[
+        {
+          name:'REAL OR DIGITAL?', type:'case-study', score:15,
+          question:'Raka salah memahami pesan singkat dari temannya karena tidak melihat ekspresi wajah dan nada bicara. Saat bertemu langsung, masalah tersebut cepat selesai setelah mereka menjelaskan maksud masing-masing. Kesimpulan yang paling tepat adalah ...',
+          options:['A. Interaksi digital selalu lebih buruk daripada interaksi langsung','B. Interaksi langsung memberi lebih banyak petunjuk nonverbal, sedangkan interaksi digital perlu pesan yang lebih jelas agar tidak mudah disalahartikan','C. Komunikasi digital tidak dapat digunakan untuk menyelesaikan masalah','D. Interaksi langsung tidak memerlukan kemampuan berkomunikasi'],
+          answer:'B',
+          explanation:'Interaksi langsung memiliki petunjuk nonverbal seperti ekspresi dan intonasi. Dalam ruang digital, pesan perlu disusun lebih jelas karena sebagian petunjuk tersebut tidak selalu terlihat.'
+        },
+        {
+          name:'DIGITAL INTERACTION SIGNALS', type:'multiple-response', score:15,
+          instruction:'Pilih semua jawaban yang tepat.',
+          question:'Manakah situasi yang menunjukkan karakteristik interaksi digital? Pilih semua jawaban yang tepat.',
+          options:['A. Informasi dapat dikirim dengan cepat kepada banyak orang','B. Interaksi hanya dapat berlangsung jika semua orang berada di ruangan yang sama','C. Jejak komunikasi dapat tersimpan sebagai pesan, foto, atau unggahan','D. Orang dapat berinteraksi secara sinkron maupun tidak sinkron','E. Semua informasi digital pasti benar karena dapat dibaca banyak orang'],
+          answer:['A','C','D'],
+          explanation:'Interaksi digital dapat berlangsung cepat, meninggalkan jejak digital, dan berlangsung secara sinkron maupun tidak sinkron. Namun, informasi digital tetap perlu diperiksa kebenarannya.'
+        },
+        {
+          name:'COMPARE THE SITUATION', type:'case-study', score:15,
+          question:'Kelompok Dina berdiskusi di kelas lalu melanjutkan pembagian tugas melalui grup chat pada malam hari. Agar kerja kelompok tetap efektif, tindakan yang paling tepat adalah ...',
+          options:['A. Menganggap pesan grup tidak penting karena diskusi utama sudah terjadi di kelas','B. Menggunakan kelebihan kedua bentuk interaksi: menyepakati keputusan penting saat diskusi, lalu memakai grup digital untuk koordinasi dan dokumentasi tugas','C. Memindahkan seluruh komunikasi ke grup digital agar tidak perlu bertemu sama sekali','D. Mengirim pesan sebanyak mungkin tanpa aturan waktu dan tanpa memastikan semua anggota memahami tugas'],
+          answer:'B',
+          explanation:'Interaksi nyata dan digital dapat saling melengkapi. Pertemuan langsung membantu penjelasan dan negosiasi, sedangkan ruang digital memudahkan koordinasi, dokumentasi, dan komunikasi jarak jauh.'
+        }
+      ]
+    },
+    {
+      name:'DIGITAL RESPONSIBILITY',
+      focus:'Respect • Educate • Protect',
+      difficulty:'🟣 LEVEL 3 • ANALYZE, EVALUATE & DECIDE',
+      videoCase:true,
+      questions:[
+        {
+          name:'FIND THE PROBLEM', type:'multiple-response', score:20,
+          instruction:'Pilih semua jawaban yang tepat berdasarkan video kasus.',
+          question:'Perilaku mana yang menjadi masalah dalam kasus Nisa? Pilih semua jawaban yang tepat.',
+          options:['A. Mengambil screenshot percakapan pribadi tanpa persetujuan','B. Meneruskan screenshot ke grup kelas','C. Menanyakan sumber informasi dan apakah informasi sudah diperiksa','D. Menertawakan dan meminta foto lain','E. Menyebarkan informasi yang belum diketahui kebenarannya','F. Mengingatkan bahwa percakapan tersebut bersifat pribadi'],
+          answer:['A','B','D','E'],
+          explanation:'Masalah utamanya adalah pelanggaran privasi, penyebaran ulang tanpa izin, komentar yang merendahkan, dan penyebaran informasi yang belum terverifikasi. Memeriksa sumber dan mengingatkan privasi justru merupakan tindakan yang bertanggung jawab.'
+        },
+        {
+          name:'MATCH THE PRINCIPLE', type:'matching', score:20,
+          question:'Cocokkan tindakan berikut dengan prinsip interaksi digital yang paling sesuai.',
+          options:['1. Tidak menertawakan atau mempermalukan Nisa di grup','2. Memeriksa sumber sebelum mempercayai dan meneruskan informasi','3. Tidak menyebarkan screenshot pribadi dan menjaga data pribadi'],
+          matchOptions:['A. Respect','B. Educate','C. Protect'],
+          answer:['A','B','C'],
+          explanation:'Respect berkaitan dengan menghargai orang lain; Educate berkaitan dengan menggunakan informasi secara cerdas dan memeriksa kebenarannya; Protect berkaitan dengan menjaga keamanan, privasi, dan data pribadi.'
+        },
+        {
+          name:'WHAT WOULD YOU DO?', type:'multiple-response', score:20,
+          instruction:'Pilih semua tindakan yang tepat jika kamu berada di dalam grup tersebut.',
+          question:'Setelah melihat screenshot pribadi Nisa tersebar dan muncul informasi yang belum jelas kebenarannya, apa yang sebaiknya kamu lakukan?',
+          options:['A. Tidak ikut meneruskan screenshot','B. Mengingatkan anggota grup agar menghentikan penyebaran','C. Memeriksa sumber informasi sebelum mempercayai atau membagikannya','D. Menyimpan screenshot untuk dibagikan nanti kepada teman dekat','E. Mendukung Nisa dan menyarankan melapor kepada guru/orang dewasa tepercaya jika situasi berlanjut','F. Menambahkan komentar lucu agar suasana grup lebih ramai'],
+          answer:['A','B','C','E'],
+          explanation:'Tindakan yang bertanggung jawab adalah menghentikan penyebaran, menjaga privasi, memeriksa kebenaran informasi, serta memberi dukungan dan mencari bantuan yang tepat bila diperlukan.'
+        }
+      ]
+    }
+  ]
 };
-function deepClone(x){return JSON.parse(JSON.stringify(x))}
-function loadJSON(k,fallback){try{const v=JSON.parse(localStorage.getItem(k));return v??fallback}catch{return fallback}}
-let config=loadJSON('mb_config_v3',deepClone(DEFAULT_CONFIG));
+
+function deepClone(x){return JSON.parse(JSON.stringify(x));}
+function loadJSON(k,fallback){try{const v=JSON.parse(localStorage.getItem(k));return v??fallback;}catch{return fallback;}}
+function esc(s=''){return String(s).replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
+function norm(v){return String(v??'').trim().toUpperCase().replace(/\s+/g,'');}
+
+let config=loadJSON(`mb_config_${STORAGE_VERSION}`,deepClone(DEFAULT_CONFIG));
 let students=loadJSON('mb_students',[]);
-let run=loadJSON('mb_run_v3',null);
+let run=loadJSON(`mb_run_${STORAGE_VERSION}`,null);
 let moveAnimation=null;
-function newRun(){return {checkpointIndex:0,questionIndex:0,started:false,gameComplete:false,checkpointCorrect:Array(6).fill(0),teams:config.teams.map((n,i)=>({name:n,progress:0,score:0,roundScores:[0,0,0],flash:0,answers:[],lastCorrect:false})),drafts:Array(6).fill(null),locked:Array(6).fill(false),revealed:false,pendingMoves:Array(6).fill(false)}}
-if(!run||!run.teams||run.teams.length!==6||run.checkpointIndex===undefined) run=newRun();
+
+function makeTeam(name,i){return {name,progress:0,score:0,roundScores:[0,0,0],flash:0,answers:[],roundCompleted:[false,false,false],lastCorrect:false,color:config.teamColors?.[i]||TEAM_COLORS_DEFAULT[i]};}
+function newRun(){return {roundIndex:0,questionIndex:0,started:false,gameComplete:false,finalMissionComplete:false,teams:config.teams.map(makeTeam),drafts:Array(6).fill(null),locked:Array(6).fill(false),revealed:false,lastResults:Array(6).fill(null)};}
+if(!run||!run.teams||run.teams.length!==6||run.roundIndex===undefined) run=newRun();
+
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-function saveRun(){localStorage.setItem('mb_run_v3',JSON.stringify(run))} function saveConfig(){localStorage.setItem('mb_config_v3',JSON.stringify(config))} function saveStudents(){localStorage.setItem('mb_students',JSON.stringify(students))}
-function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
-function go(page){$$('.page').forEach(p=>p.classList.remove('active'));const p=$('#page-'+page);if(p)p.classList.add('active');$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===page));if(page==='board')renderBoard();if(page==='setup')renderSetup();if(page==='pretest')renderTest('pre');if(page==='posttest')renderTest('post');if(page==='scoreboard')renderScoreboard();if(page==='evaluation')renderEvaluation();window.scrollTo({top:0,behavior:'smooth'})}
+function saveRun(){localStorage.setItem(`mb_run_${STORAGE_VERSION}`,JSON.stringify(run));}
+function saveConfig(){localStorage.setItem(`mb_config_${STORAGE_VERSION}`,JSON.stringify(config));}
+function saveStudents(){localStorage.setItem('mb_students',JSON.stringify(students));}
+function toast(msg){const t=$('#toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+function go(page){
+  $$('.page').forEach(p=>p.classList.remove('active'));
+  const p=$('#page-'+page); if(p)p.classList.add('active');
+  $$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===page));
+  if(page==='board')renderBoard();
+  if(page==='setup')renderSetup();
+  if(page==='pretest')renderTest('pre');
+  if(page==='posttest')renderTest('post');
+  if(page==='scoreboard')renderScoreboard();
+  if(page==='evaluation')renderEvaluation();
+  if(page==='final')renderFinalMission();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 $$('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
-function missionAt(){const ci=Math.max(0,Math.min(5,run.checkpointIndex));const r=Math.floor(ci/2),m=ci%2;const checkpoint=config.rounds[r].missions[m];const q=Math.max(0,Math.min(checkpoint.questions.length-1,run.questionIndex));return {round:config.rounds[r],checkpoint,mission:checkpoint.questions[q],r,m,q}}
-function progressLabel(p){const labels=['START','Round 1 • CP 1','Round 1 • CP 2','Round 2 • CP 1','Round 2 • CP 2','Round 3 • CP 1','Round 3 • CP 2'];return labels[Math.max(0,Math.min(6,p))]}
+
+function questionAt(r=run.roundIndex,q=run.questionIndex){const round=config.rounds[r];return {round,question:round.questions[q],r,q};}
+function teamStatus(t){if(t.progress>=3)return 'Completed';if(t.progress>0||t.answers.length)return 'In Progress';return 'Not Started';}
+function scoreCategory(v){const n=Number(v)||0;return n<60?'Perlu Penguatan':n<80?'Berkembang':'Sudah Memahami';}
+
 function renderSetup(){
- $('#cfgGameName').value=config.gameName;$('#cfgSubject').value=config.subject;$('#cfgClass').value=config.className;$('#cfgTopic').value=config.topic;$('#cfgObjective').value=config.objective;
- $('#teamNameInputs').innerHTML=config.teams.map((t,i)=>`<div class="field"><label class="label">Kelompok ${i+1}</label><input class="team-name-cfg" data-i="${i}" value="${esc(t)}"></div>`).join('');
- $('#missionEditors').innerHTML=config.rounds.map((r,ri)=>`<div class="card round-editor"><div class="eyebrow">ROUND ${ri+1}</div><div class="field"><label class="label">Nama Round</label><input class="round-name" data-r="${ri}" value="${esc(r.name)}"></div><div class="field"><label class="label">Label tingkat</label><input class="round-diff" data-r="${ri}" value="${esc(r.difficulty)}"></div>${r.missions.map((cp,mi)=>`<details class="mission-editor" open><summary>Checkpoint ${mi+1} — ${esc(cp.name)}</summary><div class="field" style="margin-top:12px"><label class="label">Nama Checkpoint</label><input class="cp-name" data-r="${ri}" data-m="${mi}" value="${esc(cp.name)}"></div><div class="notice mini" style="margin-bottom:12px">Setiap checkpoint berisi 3 soal. Kelompok harus benar minimal 2 dari 3 untuk menggerakkan pion.</div>${cp.questions.map((q,qi)=>`<details class="mission-editor"><summary>Soal ${qi+1} — ${esc(q.name)}</summary><div class="field" style="margin-top:12px"><label class="label">Nama Soal</label><input class="q-name" data-r="${ri}" data-m="${mi}" data-q="${qi}" value="${esc(q.name)}"></div><div class="field"><label class="label">Jenis Soal</label><select class="q-type" data-r="${ri}" data-m="${mi}" data-q="${qi}"><option value="mcq" ${q.type==='mcq'?'selected':''}>Pilihan Ganda / Konsep</option><option value="truefalse" ${q.type==='truefalse'?'selected':''}>Benar / Salah</option><option value="matching" ${q.type==='matching'?'selected':''}>Mencocokkan Pasangan</option></select></div><div class="field"><label class="label">Soal / Kasus</label><textarea class="q-question" data-r="${ri}" data-m="${mi}" data-q="${qi}">${esc(q.question)}</textarea></div><div class="field"><label class="label">Pilihan / Item kiri (pisahkan dengan |)</label><textarea class="q-options" data-r="${ri}" data-m="${mi}" data-q="${qi}">${esc((q.options||[]).join('|'))}</textarea></div><div class="field"><label class="label">Pilihan pasangan kanan A/B/C... (khusus matching)</label><textarea class="q-match" data-r="${ri}" data-m="${mi}" data-q="${qi}">${esc((q.matchOptions||[]).join('|'))}</textarea></div><div class="grid two"><div class="field"><label class="label">Kunci</label><input class="q-answer" data-r="${ri}" data-m="${mi}" data-q="${qi}" value="${esc(q.answer)}"></div><div class="field"><label class="label">Skor</label><input type="number" min="0" class="q-score" data-r="${ri}" data-m="${mi}" data-q="${qi}" value="${q.score}"></div></div><div class="field"><label class="label">Feedback / Penjelasan</label><textarea class="q-expl" data-r="${ri}" data-m="${mi}" data-q="${qi}">${esc(q.explanation||'')}</textarea></div></details>`).join('')}</details>`).join('')}</div>`).join('');
+  $('#cfgGameName').value=config.gameName; $('#cfgSubject').value=config.subject; $('#cfgClass').value=config.className; $('#cfgTopic').value=config.topic; $('#cfgObjective').value=config.objective;
+  if($('#cfgVideoSrc')) $('#cfgVideoSrc').value=config.videoSrc||'assets/video/digital-case.mp4';
+  $('#teamNameInputs').innerHTML=config.teams.map((t,i)=>`<div class="field"><label class="label">Kelompok ${i+1}</label><input class="team-name-cfg" data-i="${i}" value="${esc(t)}"><label class="mini muted">Warna pion</label><input type="color" class="team-color-cfg" data-i="${i}" value="${config.teamColors?.[i]||TEAM_COLORS_DEFAULT[i]}"></div>`).join('');
+  const typeOptions=(m)=>['single-choice','true-false','multiple-response','matching','case-study'].map(v=>`<option value="${v}" ${m.type===v?'selected':''}>${v}</option>`).join('');
+  $('#missionEditors').innerHTML=config.rounds.map((r,ri)=>`<div class="card round-editor"><div class="eyebrow">ROUND ${ri+1}</div><div class="field"><label class="label">Nama Round</label><input class="round-name" data-r="${ri}" value="${esc(r.name)}"></div><div class="field"><label class="label">Fokus</label><input class="round-focus" data-r="${ri}" value="${esc(r.focus)}"></div><div class="field"><label class="label">Label tingkat</label><input class="round-diff" data-r="${ri}" value="${esc(r.difficulty)}"></div>${r.questions.map((m,qi)=>`<details class="mission-editor" ${qi===0?'open':''}><summary>Question ${qi+1} — ${esc(m.name)}</summary><div class="field" style="margin-top:12px"><label class="label">Nama Tantangan</label><input class="q-name" data-r="${ri}" data-q="${qi}" value="${esc(m.name)}"></div><div class="field"><label class="label">Tipe</label><select class="q-type" data-r="${ri}" data-q="${qi}">${typeOptions(m)}</select></div><div class="field"><label class="label">Soal / Kasus</label><textarea class="q-question" data-r="${ri}" data-q="${qi}">${esc(m.question)}</textarea></div><div class="field"><label class="label">Pilihan utama (pisahkan dengan |)</label><textarea class="q-options" data-r="${ri}" data-q="${qi}">${esc((m.options||[]).join('|'))}</textarea></div><div class="field"><label class="label">Pilihan pasangan untuk Matching (pisahkan dengan |)</label><textarea class="q-match" data-r="${ri}" data-q="${qi}">${esc((m.matchOptions||[]).join('|'))}</textarea></div><div class="grid two"><div class="field"><label class="label">Kunci (multi/matching pisahkan dengan |)</label><input class="q-answer" data-r="${ri}" data-q="${qi}" value="${esc(Array.isArray(m.answer)?m.answer.join('|'):m.answer)}"></div><div class="field"><label class="label">Skor</label><input type="number" min="0" class="q-score" data-r="${ri}" data-q="${qi}" value="${m.score||0}"></div></div><div class="field"><label class="label">Feedback edukatif</label><textarea class="q-expl" data-r="${ri}" data-q="${qi}">${esc(m.explanation||'')}</textarea></div></details>`).join('')}</div>`).join('');
 }
-function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+
 $('#saveConfigBtn').addEventListener('click',()=>{
- config.gameName=$('#cfgGameName').value.trim()||'Mission Board';config.subject=$('#cfgSubject').value.trim();config.className=$('#cfgClass').value.trim();config.topic=$('#cfgTopic').value.trim();config.objective=$('#cfgObjective').value.trim();
- $$('.team-name-cfg').forEach(x=>config.teams[+x.dataset.i]=x.value.trim()||`Kelompok ${+x.dataset.i+1}`);
- $$('.round-name').forEach(x=>config.rounds[+x.dataset.r].name=x.value.trim());$$('.round-diff').forEach(x=>config.rounds[+x.dataset.r].difficulty=x.value.trim());
- for(let r=0;r<3;r++)for(let m=0;m<2;m++){const cp=config.rounds[r].missions[m];cp.name=$(`.cp-name[data-r="${r}"][data-m="${m}"]`).value.trim();for(let q=0;q<cp.questions.length;q++){const item=cp.questions[q];item.name=$(`.q-name[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.trim();item.type=$(`.q-type[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value;item.question=$(`.q-question[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.trim();item.options=$(`.q-options[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.split('|').map(v=>v.trim()).filter(Boolean);item.matchOptions=$(`.q-match[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.split('|').map(v=>v.trim()).filter(Boolean);item.answer=$(`.q-answer[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.trim().toUpperCase();item.score=+$(`.q-score[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value||0;item.explanation=$(`.q-expl[data-r="${r}"][data-m="${m}"][data-q="${q}"]`).value.trim()}}
- saveConfig();run=newRun();saveRun();toast('Pengaturan disimpan. Run baru siap dimainkan.');
+  config.gameName=$('#cfgGameName').value.trim()||'SOC Mission Board'; config.subject=$('#cfgSubject').value.trim(); config.className=$('#cfgClass').value.trim(); config.topic=$('#cfgTopic').value.trim(); config.objective=$('#cfgObjective').value.trim();
+  if($('#cfgVideoSrc')) config.videoSrc=$('#cfgVideoSrc').value.trim()||'assets/video/digital-case.mp4';
+  $$('.team-name-cfg').forEach(x=>config.teams[+x.dataset.i]=x.value.trim()||`Kelompok ${+x.dataset.i+1}`);
+  $$('.team-color-cfg').forEach(x=>config.teamColors[+x.dataset.i]=x.value);
+  for(let r=0;r<3;r++){
+    config.rounds[r].name=$(`.round-name[data-r="${r}"]`).value.trim();
+    config.rounds[r].focus=$(`.round-focus[data-r="${r}"]`).value.trim();
+    config.rounds[r].difficulty=$(`.round-diff[data-r="${r}"]`).value.trim();
+    for(let q=0;q<3;q++){
+      const item=config.rounds[r].questions[q];
+      item.name=$(`.q-name[data-r="${r}"][data-q="${q}"]`).value.trim();
+      item.type=$(`.q-type[data-r="${r}"][data-q="${q}"]`).value;
+      item.question=$(`.q-question[data-r="${r}"][data-q="${q}"]`).value.trim();
+      item.options=$(`.q-options[data-r="${r}"][data-q="${q}"]`).value.split('|').map(v=>v.trim()).filter(Boolean);
+      item.matchOptions=$(`.q-match[data-r="${r}"][data-q="${q}"]`).value.split('|').map(v=>v.trim()).filter(Boolean);
+      const raw=$(`.q-answer[data-r="${r}"][data-q="${q}"]`).value.split('|').map(v=>v.trim()).filter(Boolean);
+      item.answer=['multiple-response','matching'].includes(item.type)?raw:(raw[0]||'');
+      item.score=+$(`.q-score[data-r="${r}"][data-q="${q}"]`).value||0;
+      item.explanation=$(`.q-expl[data-r="${r}"][data-q="${q}"]`).value.trim();
+    }
+  }
+  saveConfig(); run=newRun(); saveRun(); toast('Pengaturan disimpan. Run baru siap dimainkan.');
 });
-$('#resetConfigBtn').addEventListener('click',()=>{config=deepClone(DEFAULT_CONFIG);saveConfig();run=newRun();saveRun();renderSetup();toast('Konfigurasi dikembalikan ke default 3 soal per checkpoint.')});
-function renderTest(kind){if(students.length===0)students=Array.from({length:6},(_,i)=>({name:'',group:`Kelompok ${(i%6)+1}`,pre:'',post:''}));const body=$(kind==='pre'?'#preBody':'#postBody');body.innerHTML=students.map((s,i)=>`<tr><td>${i+1}</td><td><input data-i="${i}" class="stu-name" value="${esc(s.name)}"></td><td><input data-i="${i}" class="stu-${kind}" type="number" min="0" max="100" value="${esc(s[kind])}"></td><td><input data-i="${i}" class="stu-group" value="${esc(s.group)}"></td><td><button class="btn danger remove-stu" data-i="${i}" style="padding:8px 10px">Hapus</button></td></tr>`).join('');$$('.remove-stu').forEach(b=>b.onclick=()=>{syncStudents(kind);students.splice(+b.dataset.i,1);saveStudents();renderTest(kind)})}
-function syncStudents(kind){$$('.stu-name').forEach(x=>students[+x.dataset.i].name=x.value);$$(`.stu-${kind}`).forEach(x=>students[+x.dataset.i][kind]=x.value);$$('.stu-group').forEach(x=>students[+x.dataset.i].group=x.value)}
-function addStudent(kind){syncStudents(kind);students.push({name:'',group:'Kelompok 1',pre:'',post:''});renderTest(kind)}
-$('#addStudentPre').onclick=()=>addStudent('pre');$('#addStudentPost').onclick=()=>addStudent('post');$('#savePre').onclick=()=>{syncStudents('pre');saveStudents();toast('Data pre-test tersimpan.')};$('#savePost').onclick=()=>{syncStudents('post');saveStudents();toast('Data post-test tersimpan.')};
-const BOARD_SLOT_X={cp1:[31.1,34.9,38.7,42.5,46.3,50.1],cp2:[62.3,66.1,69.9,73.7,77.5,81.3]};
-const BOARD_ROW_Y=[34.0,56.5,79.0];
-const BOARD_START=[{x:7.7,y:31.8},{x:10.0,y:31.2},{x:12.3,y:31.8},{x:7.7,y:35.0},{x:10.0,y:35.7},{x:12.3,y:35.0}];
-function pawnPosition(progress,teamIndex){
- if(progress<=0)return BOARD_START[teamIndex]||BOARD_START[0];
- const idx=Math.max(1,Math.min(6,progress))-1;
- const row=Math.floor(idx/2),cp=(idx%2===0?'cp1':'cp2');
- return {x:BOARD_SLOT_X[cp][teamIndex],y:BOARD_ROW_Y[row]};
+$('#resetConfigBtn').addEventListener('click',()=>{config=deepClone(DEFAULT_CONFIG);saveConfig();run=newRun();saveRun();renderSetup();toast('Konfigurasi kembali ke default Interaksi Masyarakat Abad ke-21.');});
+
+function renderTest(kind){
+  if(students.length===0) students=Array.from({length:6},(_,i)=>({name:'',group:`Kelompok ${(i%6)+1}`,pre:'',post:''}));
+  const body=$(kind==='pre'?'#preBody':'#postBody');
+  body.innerHTML=students.map((s,i)=>{const val=s[kind];return `<tr><td>${i+1}</td><td><input data-i="${i}" class="stu-name" value="${esc(s.name)}"></td><td><input data-i="${i}" class="stu-${kind}" type="number" min="0" max="100" value="${esc(val)}"></td><td><input data-i="${i}" class="stu-group" value="${esc(s.group)}"></td><td><span class="status-chip">${val===''?'—':scoreCategory(val)}</span></td><td><button class="btn danger remove-stu" data-i="${i}" style="padding:8px 10px">Hapus</button></td></tr>`;}).join('');
+  $$('.remove-stu').forEach(b=>b.onclick=()=>{syncStudents(kind);students.splice(+b.dataset.i,1);saveStudents();renderTest(kind);});
 }
+function syncStudents(kind){$$('.stu-name').forEach(x=>students[+x.dataset.i].name=x.value);$$(`.stu-${kind}`).forEach(x=>students[+x.dataset.i][kind]=x.value);$$('.stu-group').forEach(x=>students[+x.dataset.i].group=x.value);}
+function addStudent(kind){syncStudents(kind);students.push({name:'',group:'Kelompok 1',pre:'',post:''});renderTest(kind);}
+$('#addStudentPre').onclick=()=>addStudent('pre'); $('#addStudentPost').onclick=()=>addStudent('post');
+$('#savePre').onclick=()=>{syncStudents('pre');saveStudents();renderTest('pre');toast('Data pre-test tersimpan.');};
+$('#savePost').onclick=()=>{syncStudents('post');saveStudents();renderTest('post');toast('Data post-test tersimpan.');};
