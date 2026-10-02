@@ -1,0 +1,24 @@
+@media(max-width:1050px){
+  .hero{grid-template-columns:1fr}
+  .hero-map{min-height:500px}
+  .board-layout{grid-template-columns:1fr}
+  .progress-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .team-inputs,.result-grid,.grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .board{min-height:640px}
+  #page-board .board{min-height:720px}
+  #page-board .board-layout{display:grid;grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .topbar{align-items:flex-start}
+  .nav{display:none}
+  main{padding:14px}
+  .hero h1{font-size:4rem}
+  .grid.two,.grid.three,.team-inputs,.result-grid,.option-list,.progress-panel{grid-template-columns:1fr}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .board{min-height:610px}
+  .round-banner{align-items:flex-start;flex-direction:column}
+  #page-board .board{min-height:620px;aspect-ratio:auto}
+  #page-board .mb-title-main{font-size:2rem}
+  #page-board .mb-round-label{left:7%}
+  #page-board .pawn{width:28px;height:28px}
+}
