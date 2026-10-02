@@ -95,4 +95,9 @@
   fillQuestionBank('post');
   loadCrispHero();
   if(document.querySelector('#page-board.active'))renderBoard();
+
+  /* Only replaces the Mission Board visual and adds movement sound. */
+  const boardScript=document.createElement('script');
+  boardScript.src='board-adventure.js?v=1';
+  document.head.appendChild(boardScript);
 })();
