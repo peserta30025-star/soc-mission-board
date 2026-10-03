@@ -2,16 +2,18 @@
   const isTeam = /(^|\/)team\.html(?:$|[?#])/i.test(location.pathname + location.search);
   const role = isTeam ? 'team' : 'teacher';
   const prefKey = `soc_adventure_music_${role}`;
-  const defaultEnabled = role === 'teacher';
+  const defaultEnabled = true;
   let stored = localStorage.getItem(prefKey);
   let enabled = stored === null ? defaultEnabled : stored === '1';
   let started = false;
 
-  // Audio extracted from the user-provided WhatsApp video. Only the music/audio is used.
-  const audio = new Audio('https://drive.google.com/uc?export=download&id=1I5yDKy1WFw2JV6C4p8GqXDIV58FDgf0Z');
+  // Musik asli diekstrak dari video WhatsApp pengguna dan disimpan sebagai aset lokal website.
+  // Tidak lagi bergantung pada Google Drive agar dapat diputar langsung dari GitHub Pages.
+  const audio = new Audio('assets/adventure-music.m4a?v=20261003-local1');
   audio.loop = true;
   audio.preload = 'auto';
-  audio.volume = role === 'team' ? 0.16 : 0.32;
+  audio.volume = role === 'team' ? 0.18 : 0.34;
+  audio.setAttribute('playsinline','');
 
   const style = document.createElement('style');
   style.textContent = `
@@ -34,7 +36,7 @@
     btn.classList.toggle('off', !enabled);
     btn.classList.toggle('ready', enabled && !started && state !== 'error');
     btn.classList.toggle('error', state === 'error');
-    btn.textContent = state === 'error' ? '🎵 Ketuk untuk Musik' : !enabled ? '🔇 Musik: OFF' : started ? '🔊 Musik: ON' : '🎵 Musik: Siap';
+    btn.textContent = state === 'error' ? '🎵 Ketuk Musik Lagi' : !enabled ? '🔇 Musik: OFF' : started ? '🔊 Musik: ON' : '🎵 Musik: Siap';
   }
 
   async function playMusic(){
@@ -43,9 +45,10 @@
       await audio.play();
       started = true;
       updateButton();
-    }catch{
+    }catch(err){
       started = false;
       updateButton('error');
+      console.warn('SOC music play blocked:', err);
     }
   }
 
@@ -64,19 +67,25 @@
   }
 
   btn.addEventListener('click', e => {
+    e.preventDefault();
     e.stopPropagation();
     if(enabled && started) stopMusic();
     else turnOn();
   });
 
+  // Browser membutuhkan interaksi pertama sebelum memutar audio.
   const unlock = () => {
     if(enabled && !started) playMusic();
   };
   window.addEventListener('pointerdown', unlock, {passive:true});
+  window.addEventListener('touchstart', unlock, {passive:true});
   window.addEventListener('keydown', unlock, {passive:true});
   document.addEventListener('visibilitychange', () => {
     if(document.visibilityState === 'visible' && enabled && !started) playMusic();
   });
 
+  audio.addEventListener('canplay', updateButton);
+  audio.addEventListener('error', () => updateButton('error'));
+  audio.load();
   updateButton();
 })();
