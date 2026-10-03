@@ -1,19 +1,11 @@
 (() => {
   const isTeam = /(^|\/)team\.html(?:$|[?#])/i.test(location.pathname + location.search);
   const role = isTeam ? 'team' : 'teacher';
-  const prefKey = `soc_adventure_music_${role}`;
-  const defaultEnabled = true;
-  let stored = localStorage.getItem(prefKey);
-  let enabled = stored === null ? defaultEnabled : stored === '1';
+  const prefKey = `soc_adventure_music_embedded_v3_${role}`;
+  let enabled = localStorage.getItem(prefKey) !== '0';
   let started = false;
-
-  // Musik asli diekstrak dari video WhatsApp pengguna dan disimpan sebagai aset lokal website.
-  // Tidak lagi bergantung pada Google Drive agar dapat diputar langsung dari GitHub Pages.
-  const audio = new Audio('assets/adventure-music.m4a?v=20261003-local1');
-  audio.loop = true;
-  audio.preload = 'auto';
-  audio.volume = role === 'team' ? 0.18 : 0.34;
-  audio.setAttribute('playsinline','');
+  let audio = null;
+  let audioPromise = null;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -39,10 +31,42 @@
     btn.textContent = state === 'error' ? '🎵 Ketuk Musik Lagi' : !enabled ? '🔇 Musik: OFF' : started ? '🔊 Musik: ON' : '🎵 Musik: Siap';
   }
 
+  function loadAudio(){
+    if(audio) return Promise.resolve(audio);
+    if(audioPromise) return audioPromise;
+    audioPromise = fetch('assets/adventure-loop.b64?v=20261003-music3', {cache:'no-store'})
+      .then(r => {
+        if(!r.ok) throw new Error(`Audio data ${r.status}`);
+        return r.text();
+      })
+      .then(b64 => {
+        const clean = b64.trim();
+        if(clean.length < 1000) throw new Error('Audio data terlalu pendek');
+        audio = new Audio('data:audio/mpeg;base64,' + clean);
+        audio.loop = true;
+        audio.preload = 'auto';
+        audio.volume = role === 'team' ? 0.20 : 0.38;
+        audio.setAttribute('playsinline','');
+        audio.addEventListener('playing', () => { started = true; updateButton(); });
+        audio.addEventListener('pause', () => { if(!audio.ended){ started = false; updateButton(); } });
+        audio.addEventListener('error', () => { started = false; updateButton('error'); });
+        return audio;
+      })
+      .catch(err => {
+        console.warn('SOC music load failed:', err);
+        audioPromise = null;
+        updateButton('error');
+        throw err;
+      });
+    return audioPromise;
+  }
+
   async function playMusic(){
     if(!enabled) return;
     try{
-      await audio.play();
+      const a = await loadAudio();
+      if(a.ended) a.currentTime = 0;
+      await a.play();
       started = true;
       updateButton();
     }catch(err){
@@ -55,7 +79,7 @@
   function stopMusic(){
     enabled = false;
     localStorage.setItem(prefKey,'0');
-    audio.pause();
+    if(audio) audio.pause();
     started = false;
     updateButton();
   }
@@ -73,8 +97,8 @@
     else turnOn();
   });
 
-  // Browser membutuhkan interaksi pertama sebelum memutar audio.
-  const unlock = () => {
+  const unlock = e => {
+    if(e?.target === btn) return;
     if(enabled && !started) playMusic();
   };
   window.addEventListener('pointerdown', unlock, {passive:true});
@@ -84,8 +108,6 @@
     if(document.visibilityState === 'visible' && enabled && !started) playMusic();
   });
 
-  audio.addEventListener('canplay', updateButton);
-  audio.addEventListener('error', () => updateButton('error'));
-  audio.load();
+  loadAudio().catch(()=>{});
   updateButton();
 })();
