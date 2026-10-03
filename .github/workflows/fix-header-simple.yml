@@ -1,0 +1,22 @@
+name: Single header fix
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-header-simple.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hide outer header in workspace
+        run: |
+          python -c "from pathlib import Path; p=Path('teacher-home.html'); s=p.read_text(encoding='utf-8'); s=s.replace(\"function showHome(){mode='home';setActive();workspace.classList.add('hidden');cover.classList.remove('hidden');}\",\"function showHome(){mode='home';setActive();document.getElementById('topbar').style.display='flex';workspace.classList.add('hidden');cover.classList.remove('hidden');}\",1); s=s.replace(\"function showWorkspace(){cover.classList.add('hidden');workspace.classList.remove('hidden');}\",\"function showWorkspace(){document.getElementById('topbar').style.display='none';cover.classList.add('hidden');workspace.classList.remove('hidden');}\",1); p.write_text(s,encoding='utf-8')"
+      - name: Commit change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add teacher-home.html
+          git commit -m "Show only one header in teacher workspace" || exit 0
+          git push
