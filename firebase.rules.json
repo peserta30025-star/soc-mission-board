@@ -1,0 +1,56 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "teacherConfig": {
+      ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
+      ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+    },
+    "sessions": {
+      "$code": {
+        "meta": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+        },
+        "publicQuestions": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+        },
+        "teams": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+        },
+        "private": {
+          ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
+          ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+        },
+        "teamClaims": {
+          "$teamId": {
+            ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || data.child('uid').val() === auth.uid)",
+            ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || (auth.uid !== 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' && newData.child('uid').val() === auth.uid && ((!data.exists() && newData.child('pin').val() === root.child('sessions').child($code).child('private').child('teamPins').child($teamId).val()) || (data.child('uid').val() === auth.uid && newData.child('pin').val() === data.child('pin').val()))))"
+          }
+        },
+        "presence": {
+          "$teamId": {
+            ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
+            ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('teamClaims').child($teamId).child('uid').val() === auth.uid)"
+          }
+        },
+        "answers": {
+          "$questionId": {
+            "$teamId": {
+              ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('teamClaims').child($teamId).child('uid').val() === auth.uid)",
+              ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || (root.child('sessions').child($code).child('teamClaims').child($teamId).child('uid').val() === auth.uid && root.child('sessions').child($code).child('meta').child('status').val() === 'PLAYING' && root.child('sessions').child($code).child('meta').child('questionState').val() === 'ANSWERING' && (!data.exists() || data.child('locked').val() !== true) && newData.child('uid').val() === auth.uid && newData.child('locked').val() === true && !newData.child('correct').exists() && !newData.child('scored').exists()))"
+            }
+          }
+        },
+        "revealPublic": {
+          "$questionId": {
+            ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('meta').child('questionState').val() === 'REVEALED' || root.child('sessions').child($code).child('meta').child('questionState').val() === 'COMPLETED' || root.child('sessions').child($code).child('meta').child('status').val() === 'FINAL_MISSION' || root.child('sessions').child($code).child('meta').child('status').val() === 'COMPLETED')",
+            ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+          }
+        }
+      }
+    }
+  }
+}
