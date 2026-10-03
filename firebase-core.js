@@ -26,6 +26,7 @@ export async function teacherLogin(email, password) {
 }
 
 export async function teamAnonymousLogin() {
+  if (typeof auth.authStateReady === 'function') await auth.authStateReady();
   if (auth.currentUser) return auth.currentUser;
   const cred = await signInAnonymously(auth);
   return cred.user;
