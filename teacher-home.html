@@ -8,89 +8,138 @@
 <meta http-equiv="Expires" content="0">
 <title>SOC Mission Board — Teacher Home</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fffaf0}#site{width:100%;height:100%;border:0;display:block}.loading{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#fffaf0;color:#15527d;font:800 20px/1.4 system-ui,sans-serif}.loading.hidden{display:none}
-.mode-dock{position:fixed;z-index:80;right:22px;bottom:22px;width:min(470px,calc(100vw - 44px));padding:15px 16px;border:1px solid #cfe4ef;border-radius:22px;background:rgba(255,255,255,.97);box-shadow:0 14px 40px rgba(15,77,112,.18);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#174f78;display:none}.mode-dock.show{display:block}.mode-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}.mode-head b{font-size:16px}.mode-head small{color:#6c8aa0;font-weight:700}.mode-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode-btn{border:0;border-radius:15px;padding:13px 12px;font-weight:900;font-size:14px;cursor:pointer}.mode-teacher{background:#138dcc;color:#fff}.mode-phone{background:#0f5b86;color:#fff}.mode-note{margin-top:9px;color:#6c8aa0;font-size:12.5px;line-height:1.4}.mode-close{border:0;background:#eef6fa;color:#174f78;border-radius:10px;width:30px;height:30px;font-weight:900;cursor:pointer}@media(max-width:650px){.mode-actions{grid-template-columns:1fr}.mode-dock{right:12px;bottom:12px;width:calc(100vw - 24px);box-sizing:border-box}}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-rounded,"Trebuchet MS",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#fff9ee;color:#174f78}body{overflow-x:hidden}.hidden{display:none!important}
+.topbar{height:86px;display:flex;align-items:center;gap:18px;padding:12px 24px;background:rgba(255,251,243,.96);border-bottom:1px solid #dbeaf1;position:sticky;top:0;z-index:50;box-shadow:0 6px 20px rgba(27,79,112,.06)}
+.brand{display:flex;align-items:center;gap:12px;min-width:270px;cursor:pointer}.brand-badge{width:48px;height:48px;border-radius:15px;background:#ffd166;display:grid;place-items:center;font-size:25px;box-shadow:0 8px 18px rgba(255,177,22,.22)}.brand b{font-size:20px;letter-spacing:.03em}.brand small{display:block;color:#7a91a2;font-weight:700;margin-top:2px}
+.mode-nav{flex:1;display:flex;justify-content:center;gap:12px}.mode-btn{border:0;border-radius:18px;padding:13px 22px;font-weight:900;font-size:15px;cursor:pointer;transition:.22s transform,.22s box-shadow;box-shadow:0 8px 18px rgba(15,91,134,.12)}.mode-btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(15,91,134,.18)}.mode-teacher{background:#1a98d2;color:#fff}.mode-phone{background:#0f5b86;color:#fff}.top-actions{display:flex;gap:10px}.ghost{border:1px solid #d4e5ed;background:white;color:#174f78;border-radius:15px;padding:11px 15px;font-weight:900;cursor:pointer}
+.cover{min-height:calc(100vh - 86px);position:relative;overflow:hidden;background:linear-gradient(180deg,#eefaff 0%,#f8fcf7 54%,#fff6dc 100%)}.sun{position:absolute;width:170px;height:170px;border-radius:50%;background:#ffe49a;left:-42px;top:-44px;filter:blur(.2px);opacity:.8}.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.82;filter:drop-shadow(0 8px 16px rgba(78,139,171,.08))}.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}.cloud.c1{width:155px;height:45px;top:105px;left:9%;animation:drift 18s ease-in-out infinite}.cloud.c1:before{width:63px;height:63px;left:24px;bottom:6px}.cloud.c1:after{width:80px;height:80px;left:68px;bottom:3px}.cloud.c2{width:140px;height:40px;top:82px;right:8%;animation:drift 22s ease-in-out infinite reverse}.cloud.c2:before{width:55px;height:55px;left:22px;bottom:4px}.cloud.c2:after{width:68px;height:68px;left:65px;bottom:2px}@keyframes drift{50%{transform:translateX(28px)}}
+.hero-wrap{width:min(1440px,96vw);margin:0 auto;padding:38px 0 24px;display:grid;grid-template-columns:.78fr 1.5fr;gap:30px;align-items:center;position:relative;z-index:2}.hero-copy{padding:18px 4px 18px 10px}.eyebrow{color:#d98900;font-weight:950;letter-spacing:.18em;font-size:13px}.hero-copy h1{font-size:clamp(48px,6.2vw,94px);line-height:.88;margin:18px 0 16px;color:#14557f;letter-spacing:-.04em}.hero-copy h1 span{display:block;color:#20a2dc}.mission-pill{display:inline-flex;align-items:center;gap:9px;padding:10px 15px;border-radius:999px;background:#fff;border:1px solid #cfe6f1;font-weight:950;box-shadow:0 8px 20px rgba(35,120,159,.08)}.tagline{font-size:24px;color:#169dd6;margin:24px 0 8px}.hero-copy p{font-size:17px;line-height:1.65;color:#527994;margin:0;max-width:580px}.top-hint{margin-top:22px;padding:13px 15px;border-radius:16px;background:rgba(255,255,255,.76);border:1px dashed #8bcbe8;color:#527994;font-weight:750;max-width:560px}
+.adventure{position:relative;border:2px solid #bfe1ef;border-radius:34px;background:#dff5ff;box-shadow:0 22px 60px rgba(21,92,132,.16);overflow:hidden;min-height:600px}.adventure:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 45%);pointer-events:none}.adventure-head{position:absolute;z-index:5;left:28px;top:24px;padding:12px 18px;border-radius:18px;background:rgba(255,255,255,.9);box-shadow:0 8px 24px rgba(30,100,136,.12)}.adventure-head b{display:block;font-size:20px}.adventure-head small{color:#7190a4;font-weight:800}.adventure svg{display:block;width:100%;height:100%;min-height:600px}.float-card{position:absolute;z-index:7;background:rgba(255,255,255,.94);border:1px solid #d7eaf2;border-radius:16px;padding:10px 13px;font-weight:900;box-shadow:0 10px 28px rgba(24,89,124,.13);animation:floaty 3.2s ease-in-out infinite}.float-card.fc1{right:24px;top:24px;color:#148bc2}.float-card.fc2{left:30px;bottom:24px;color:#299d68;animation-delay:.8s}.float-card.fc3{right:28px;bottom:28px;color:#e58c00;animation-delay:1.4s}@keyframes floaty{50%{transform:translateY(-8px)}}
+.workspace{height:calc(100vh - 86px);background:white}.workspace iframe{width:100%;height:100%;border:0;display:block}.loading{position:fixed;inset:86px 0 0;z-index:90;display:grid;place-items:center;background:#fff9ee;color:#15527d;font-size:20px;font-weight:900}.loading.hidden{display:none}
+@media(max-width:1050px){.topbar{height:auto;flex-wrap:wrap}.brand{min-width:220px}.mode-nav{order:3;width:100%}.cover{min-height:calc(100vh - 130px)}.hero-wrap{grid-template-columns:1fr;padding-top:22px}.hero-copy{text-align:center}.hero-copy p,.top-hint{margin-left:auto;margin-right:auto}.adventure{min-height:520px}.adventure svg{min-height:520px}.workspace{height:calc(100vh - 130px)}}
+@media(max-width:680px){.topbar{padding:10px 12px}.brand{min-width:0;flex:1}.brand small{display:none}.top-actions .ghost:first-child{display:none}.mode-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mode-btn{padding:11px 8px;font-size:12px}.hero-wrap{width:94vw}.hero-copy h1{font-size:54px}.tagline{font-size:20px}.adventure{min-height:430px;border-radius:24px}.adventure svg{min-height:430px}.float-card{font-size:11px}.adventure-head b{font-size:16px}}
 </style>
 </head>
 <body>
-<div id="loading" class="loading">Membuka SOC Mission Board Teacher...</div>
-<iframe id="site" title="SOC Mission Board Teacher Home" src="about:blank"></iframe>
-<div id="modeDock" class="mode-dock" aria-label="Pilihan mode permainan">
-  <div class="mode-head"><div><b>🎮 Pilih Mode Permainan</b><br><small>Guru dapat memakai salah satu dari dua cara.</small></div><button id="modeClose" class="mode-close" title="Tutup">×</button></div>
-  <div class="mode-actions">
-    <button id="teacherModeBtn" class="mode-btn mode-teacher">🖥️ MODE GURU<br><span style="font-size:11px;font-weight:700">Input & Lock dari laptop</span></button>
-    <button id="phoneModeBtn" class="mode-btn mode-phone">📱 MODE HP SISWA<br><span style="font-size:11px;font-weight:700">Teacher Mission Control</span></button>
+<header class="topbar">
+  <div class="brand" id="homeBtn">
+    <div class="brand-badge">🧭</div>
+    <div><b>SOC MISSION BOARD</b><small>Teacher Adventure Hub</small></div>
   </div>
-  <div class="mode-note"><b>Mode Guru:</b> guru memasukkan jawaban 6 kelompok dan mengunci jawaban dari laptop. <b>Mode HP Siswa:</b> kelompok menjawab dari HP masing-masing, guru mengontrol sesi secara realtime.</div>
-</div>
+  <nav class="mode-nav" aria-label="Mode permainan">
+    <button id="teacherModeBtn" class="mode-btn mode-teacher">🖥️ MODE GURU · INPUT & LOCK</button>
+    <button id="phoneModeBtn" class="mode-btn mode-phone">📱 MODE HP SISWA · MISSION CONTROL</button>
+  </nav>
+  <div class="top-actions">
+    <button id="homeSmallBtn" class="ghost">Home</button>
+    <button id="logoutBtn" class="ghost">Logout</button>
+  </div>
+</header>
+
+<section id="cover" class="cover">
+  <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+  <div class="hero-wrap">
+    <div class="hero-copy">
+      <div class="eyebrow">IPS KELAS IX · INTERAKSI MASYARAKAT ABAD KE-21</div>
+      <h1>SOC <span>MISSION BOARD</span></h1>
+      <div class="mission-pill">🎯 DIGITAL SOCIETY MISSION</div>
+      <h2 class="tagline">Think. Connect. Respect.</h2>
+      <p>Masuki petualangan tiga round, pecahkan sembilan tantangan masyarakat digital, dan bawa pion kelompok menuju checkpoint hingga FINISH.</p>
+      <div class="top-hint">✨ Pilih <b>MODE GURU</b> atau <b>MODE HP SISWA</b> langsung dari menu di bagian atas.</div>
+    </div>
+
+    <div class="adventure" aria-label="Animasi petualangan Mission Board">
+      <div class="adventure-head"><b>🗺️ Mission Adventure</b><small>START → CP1 → CP2 → FINISH</small></div>
+      <div class="float-card fc1">🤝 TEAMWORK</div>
+      <div class="float-card fc2">💡 THINK SMART</div>
+      <div class="float-card fc3">🏆 REACH FINISH</div>
+      <svg viewBox="0 0 1000 620" role="img" aria-label="Jalur petualangan Mission Board dengan pion bergerak">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfefff"/><stop offset="1" stop-color="#eefbf5"/></linearGradient>
+          <linearGradient id="river" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8cd8f2"/><stop offset="1" stop-color="#4ebce7"/></linearGradient>
+          <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#285b73" flood-opacity=".2"/></filter>
+          <path id="route" d="M115,490 C230,525 260,400 350,365 S505,340 545,245 S705,125 865,165"/>
+        </defs>
+        <rect width="1000" height="620" fill="url(#sky)"/>
+        <circle cx="850" cy="82" r="54" fill="#ffe28a" opacity=".82"/>
+        <path d="M0 290 L140 155 L255 292 Z" fill="#9cc8bf"/><path d="M110 290 L280 105 L455 292 Z" fill="#7eb3ab"/><path d="M330 292 L485 145 L640 292 Z" fill="#98c4b5"/><path d="M610 292 L790 125 L980 292 Z" fill="#83b7aa"/>
+        <path d="M212 182 L280 105 L345 175 L306 160 L280 144 L253 163 Z" fill="#f7fbf7" opacity=".95"/>
+        <path d="M0 430 C160 365 300 450 430 420 S720 350 1000 430 L1000 620 L0 620 Z" fill="#a9dda1"/>
+        <path d="M0 500 C150 455 240 575 380 535 S610 455 760 510 S920 565 1000 525 L1000 620 L0 620 Z" fill="url(#river)" opacity=".82"/>
+        <g opacity=".95"><circle cx="55" cy="430" r="30" fill="#4ca66a"/><circle cx="78" cy="424" r="25" fill="#5db778"/><circle cx="930" cy="355" r="34" fill="#479d64"/><circle cx="958" cy="360" r="27" fill="#61b97a"/><rect x="51" y="448" width="8" height="45" rx="4" fill="#7a5a38"/><rect x="927" y="382" width="9" height="52" rx="4" fill="#7a5a38"/></g>
+        <use href="#route" fill="none" stroke="#fff7df" stroke-width="54" stroke-linecap="round" filter="url(#shadow)"/>
+        <use href="#route" fill="none" stroke="#e2a83a" stroke-width="7" stroke-dasharray="16 17" stroke-linecap="round"/>
+
+        <g filter="url(#shadow)"><circle cx="115" cy="490" r="52" fill="#0f5b86" stroke="#fff" stroke-width="7"/><text x="115" y="481" text-anchor="middle" font-size="35">🚩</text><text x="115" y="518" text-anchor="middle" font-size="19" font-weight="900" fill="#fff">START</text></g>
+        <g filter="url(#shadow)"><circle cx="350" cy="365" r="52" fill="#fff" stroke="#2ba5d8" stroke-width="7"/><text x="350" y="358" text-anchor="middle" font-size="30">◆</text><text x="350" y="393" text-anchor="middle" font-size="20" font-weight="900" fill="#15527d">CP 1</text></g>
+        <g filter="url(#shadow)"><circle cx="545" cy="245" r="52" fill="#fff8df" stroke="#eda91d" stroke-width="7"/><text x="545" y="238" text-anchor="middle" font-size="30">◆</text><text x="545" y="273" text-anchor="middle" font-size="20" font-weight="900" fill="#15527d">CP 2</text></g>
+        <g filter="url(#shadow)"><circle cx="865" cy="165" r="58" fill="#fff" stroke="#8f55c5" stroke-width="8"/><text x="865" y="153" text-anchor="middle" font-size="38">🏆</text><text x="865" y="195" text-anchor="middle" font-size="19" font-weight="900" fill="#15527d">FINISH</text></g>
+
+        <g filter="url(#shadow)"><circle r="17" fill="#4aa3ff" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">1</text><animateMotion dur="15s" repeatCount="indefinite" begin="0s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#56df9b" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">2</text><animateMotion dur="15s" repeatCount="indefinite" begin="-2.4s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ffd166" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">3</text><animateMotion dur="15s" repeatCount="indefinite" begin="-4.8s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ff6b6b" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">4</text><animateMotion dur="15s" repeatCount="indefinite" begin="-7.2s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#b990ff" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">5</text><animateMotion dur="15s" repeatCount="indefinite" begin="-9.6s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ff9f43" stroke="#fff" stroke-width="5"/><text x="0" y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">6</text><animateMotion dur="15s" repeatCount="indefinite" begin="-12s"><mpath href="#route"/></animateMotion></g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="workspace" class="workspace hidden">
+  <iframe id="teacherFrame" title="SOC Mission Board Mode Guru" src="about:blank"></iframe>
+</section>
+<div id="loading" class="loading hidden">Membuka Mode Guru...</div>
+
 <script type="module">
 import {auth,TEACHER_UID,logout} from './firebase-core.js';
 
-const frame=document.getElementById('site');
+const cover=document.getElementById('cover');
+const workspace=document.getElementById('workspace');
+const frame=document.getElementById('teacherFrame');
 const loading=document.getElementById('loading');
-const dock=document.getElementById('modeDock');
-const teacherModeBtn=document.getElementById('teacherModeBtn');
-const phoneModeBtn=document.getElementById('phoneModeBtn');
-const modeClose=document.getElementById('modeClose');
 
-function decorateTeacherHome(){
-  try{
-    const d=frame.contentDocument;
-    if(!d || !d.body)return false;
-    const nav=d.querySelector('#nav');
-    if(nav && !d.querySelector('#teacherMissionControlNav')){
-      const control=d.createElement('button');
-      control.id='teacherMissionControlNav';
-      control.textContent='Teacher Mission Control';
-      control.style.background='#0f5b86';
-      control.style.color='#fff';
-      control.onclick=()=>{window.location.href='teacher-control.html';};
-      nav.appendChild(control);
-      const out=d.createElement('button');
-      out.id='teacherLogoutNav';
-      out.textContent='Logout';
-      out.onclick=async()=>{await logout();window.location.replace('teacher.html');};
-      nav.appendChild(out);
-    }
-    const start=d.querySelector('#startGameBtn');
-    if(start){
-      start.textContent='🖥️ Mulai Mode Guru';
-      start.title='Guru menjadi operator: input dan lock jawaban kelompok dari laptop.';
-    }
+if(typeof auth.authStateReady==='function') await auth.authStateReady();
+if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
+  location.replace('teacher.html');
+}
+
+function showHome(){
+  workspace.classList.add('hidden');
+  cover.classList.remove('hidden');
+  loading.classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openTeacherMode(){
+  cover.classList.add('hidden');
+  workspace.classList.remove('hidden');
+  loading.classList.remove('hidden');
+  if(frame.src==='about:blank' || !frame.src.includes('index.html')){
+    frame.src='index.html?v=20261003-adventure1';
+  }else{
     loading.classList.add('hidden');
-    dock.classList.add('show');
-    return true;
-  }catch(err){
-    console.error(err);
-    loading.textContent='Gagal membuka Teacher Home. Silakan refresh halaman.';
-    return false;
+    try{frame.contentDocument?.querySelector('#startGameBtn')?.click();}catch{}
   }
 }
 
 frame.addEventListener('load',()=>{
   if(frame.src==='about:blank')return;
-  decorateTeacherHome();
-});
-
-if(typeof auth.authStateReady==='function') await auth.authStateReady();
-if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
-  location.replace('teacher.html');
-}else{
-  frame.src='index.html?v=20261003-teacher3';
-}
-
-teacherModeBtn.onclick=()=>{
-  dock.classList.remove('show');
+  loading.classList.add('hidden');
   try{
     const start=frame.contentDocument?.querySelector('#startGameBtn');
-    if(start){start.click();return;}
+    if(start){
+      start.textContent='🚀 Mulai Mode Guru';
+      start.title='Guru menjadi operator: input dan lock jawaban kelompok dari laptop.';
+    }
   }catch{}
-  frame.src='index.html?v=20261003-teacher3';
-};
-phoneModeBtn.onclick=()=>{window.location.href='teacher-control.html';};
-modeClose.onclick=()=>dock.classList.remove('show');
+});
 
-setTimeout(()=>{if(!loading.classList.contains('hidden'))decorateTeacherHome();},2500);
+document.getElementById('teacherModeBtn').onclick=openTeacherMode;
+document.getElementById('phoneModeBtn').onclick=()=>{location.href='teacher-control.html';};
+document.getElementById('homeBtn').onclick=showHome;
+document.getElementById('homeSmallBtn').onclick=showHome;
+document.getElementById('logoutBtn').onclick=async()=>{await logout();location.replace('teacher.html');};
 </script>
 </body>
 </html>
