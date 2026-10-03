@@ -1,0 +1,35 @@
+name: Prepare browser-safe adventure audio asset
+on:
+  push:
+    paths:
+      - '.github/workflows/make-audio-txt.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create TXT audio data and refresh references
+        run: |
+          cp assets/adventure-loop.b64 assets/adventure-loop.txt
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('adventure-music.js')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('assets/adventure-loop.b64?v=20261003-music3','assets/adventure-loop.txt?v=20261003-music4')
+          p.write_text(s,encoding='utf-8')
+          for name in ['teacher-home.html','team.html']:
+              p=Path(name)
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('adventure-music.js?v=20261003-music3','adventure-music.js?v=20261003-music4')
+              p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit browser-safe music asset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/adventure-loop.txt adventure-music.js teacher-home.html team.html
+          git commit -m "Serve adventure music through TXT data asset"
+          git push
