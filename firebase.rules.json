@@ -26,8 +26,14 @@
         },
         "teamClaims": {
           "$teamId": {
-            ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || data.child('uid').val() === auth.uid)",
-            ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || (auth.uid !== 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' && newData.child('uid').val() === auth.uid && ((!data.exists() && newData.child('pin').val() === root.child('sessions').child($code).child('private').child('teamPins').child($teamId).val()) || (data.child('uid').val() === auth.uid && newData.child('pin').val() === data.child('pin').val()))))"
+            ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
+            ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || (auth.uid !== 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' && newData.child('uid').val() === auth.uid && ((!data.exists() && newData.child('pin').val() === root.child('sessions').child($code).child('private').child('teamPins').child($teamId).val()) || (data.child('uid').val() === auth.uid && newData.child('pin').val() === data.child('pin').val()))))",
+            "uid": {
+              ".read": "auth != null"
+            },
+            "pin": {
+              ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
+            }
           }
         },
         "presence": {
