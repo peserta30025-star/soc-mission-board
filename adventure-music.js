@@ -34,7 +34,7 @@
   function loadAudio(){
     if(audio) return Promise.resolve(audio);
     if(audioPromise) return audioPromise;
-    audioPromise = fetch('assets/adventure-loop.b64?v=20261003-music3', {cache:'no-store'})
+    audioPromise = fetch('assets/adventure-loop.txt?v=20261003-music4', {cache:'no-store'})
       .then(r => {
         if(!r.ok) throw new Error(`Audio data ${r.status}`);
         return r.text();
