@@ -2,135 +2,55 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>SOC Mission Board — Teacher Mission Control</title>
+<title>SOC Mission Board — Teacher Login</title>
 <link rel="stylesheet" href="teacher.css?v=20261003-4">
+<style>
+.teacher-login-note{margin-top:14px;padding:13px 14px;border-radius:16px;background:#eef8fd;color:#527994;font-size:.92rem;line-height:1.5;text-align:left}.teacher-login-note b{color:#174f78}
+</style>
 </head>
 <body>
-<div id="loginView" class="screen center-screen">
+<div class="screen center-screen">
   <div class="login-card">
     <div class="brand-mark">🧭</div>
-    <div class="eyebrow">TEACHER / HOST MODE</div>
-    <h1>SOC Mission Control</h1>
-    <p>Login dengan akun Teacher Firebase untuk membuat atau melanjutkan sesi kelas.</p>
+    <div class="eyebrow">TEACHER ACCOUNT</div>
+    <h1>SOC Mission Board</h1>
+    <p>Masuk sebagai guru untuk membuka halaman utama SOC Mission Board dan memilih cara menjalankan permainan.</p>
     <label>Email Teacher<input id="teacherEmail" type="email" autocomplete="username"></label>
     <label>Password<input id="teacherPassword" type="password" autocomplete="current-password"></label>
     <button id="teacherLoginBtn" class="btn primary">Login Teacher</button>
     <div id="loginError" class="error"></div>
+    <div class="teacher-login-note"><b>Setelah login tersedia 2 mode:</b><br>🖥️ <b>Mode Guru</b> — guru memasukkan dan mengunci jawaban kelompok dari laptop.<br>📱 <b>Mode HP Siswa</b> — kelompok menjawab dari HP dan guru mengontrol melalui Teacher Mission Control.</div>
     <a class="back-link" href="index.html">← Kembali ke SOC Mission Board</a>
   </div>
 </div>
+<script type="module">
+import {auth,TEACHER_UID,teacherLogin,logout} from './firebase-core.js';
 
-<div id="teacherApp" class="app hidden">
-  <header class="topbar">
-    <div><div class="eyebrow">SOC MISSION BOARD</div><h1>Teacher Mission Control</h1></div>
-    <div class="top-actions">
-      <a class="btn ghost" href="index.html" target="_blank">Shared Board / Tools</a>
-      <button id="logoutBtn" class="btn ghost">Logout</button>
-    </div>
-  </header>
+const email=document.getElementById('teacherEmail');
+const password=document.getElementById('teacherPassword');
+const btn=document.getElementById('teacherLoginBtn');
+const err=document.getElementById('loginError');
 
-  <main>
-    <section class="status-grid">
-      <div class="status-card"><span>GAME CODE</span><strong id="gameCode">------</strong></div>
-      <div class="status-card"><span>SESSION</span><strong id="sessionStatus">NO SESSION</strong></div>
-      <div class="status-card"><span>CONNECTION</span><strong id="onlineCount">0 / 6 Teams Online</strong></div>
-      <div class="status-card"><span>MISSION</span><strong id="missionPosition">Round 1 • Q1</strong></div>
-    </section>
+async function openTeacherHomeIfReady(){
+  if(typeof auth.authStateReady==='function') await auth.authStateReady();
+  if(auth.currentUser?.uid===TEACHER_UID){location.replace('teacher-home.html');return true;}
+  if(auth.currentUser && auth.currentUser.uid!==TEACHER_UID) await logout();
+  return false;
+}
+await openTeacherHomeIfReady();
 
-    <section id="sessionSetup" class="card setup-card">
-      <div>
-        <div class="eyebrow">SESSION</div>
-        <h2>Create / Resume Game Session</h2>
-        <p>Buat sesi baru untuk menghasilkan Game Code dan PIN per kelompok, atau lanjutkan sesi sebelumnya.</p>
-      </div>
-      <div class="setup-actions">
-        <button id="createSessionBtn" class="btn primary">＋ Create Game Session</button>
-        <div class="resume-row"><input id="resumeCode" inputmode="numeric" maxlength="6" placeholder="6 digit code"><button id="resumeBtn" class="btn secondary">Resume</button></div>
-      </div>
-    </section>
-
-    <section id="secureSetup" class="card warning-card hidden">
-      <div class="eyebrow">ONE-TIME SECURE SETUP</div>
-      <h2>Answer Keys belum tersimpan di Firebase</h2>
-      <p>Paste JSON kunci yang diberikan di chat. Data ini disimpan pada area Teacher-only dan tidak dikirim ke Team Mode.</p>
-      <textarea id="answerKeySeed" rows="8" spellcheck="false" placeholder='{"r1q1":"B", ...}'></textarea>
-      <button id="saveKeysBtn" class="btn primary">Simpan Secure Answer Keys</button>
-      <div id="keySetupMessage" class="mini"></div>
-    </section>
-
-    <section id="dashboard" class="hidden">
-      <div class="dashboard-grid">
-        <section class="card lobby-card">
-          <div class="card-head"><div><div class="eyebrow">TEAM LOBBY</div><h2>Connected Teams</h2></div><button id="togglePinsBtn" class="btn tiny">Show PIN</button></div>
-          <div id="teamLobby" class="team-list"></div>
-          <div class="lobby-footer"><strong id="connectedCount">0 / 6 Teams Connected</strong><button id="startMissionBtn" class="btn primary">START MISSION</button></div>
-        </section>
-
-        <section class="card board-card">
-          <div class="card-head"><div><div class="eyebrow">SHARED GAME BOARD</div><h2>Mission Progress</h2></div></div>
-          <div class="mini-board">
-            <div class="board-stage"><span>🚩</span><b>START</b></div><i></i>
-            <div class="board-stage"><span>◆</span><b>CP 1</b></div><i></i>
-            <div class="board-stage"><span>◆</span><b>CP 2</b></div><i></i>
-            <div class="board-stage"><span>🏆</span><b>FINISH</b></div>
-            <div id="boardPawns" class="board-pawns"></div>
-          </div>
-          <div id="missionProgressTable"></div>
-        </section>
-      </div>
-
-      <section class="card mission-card">
-        <div class="mission-top">
-          <div><div id="roundTag" class="eyebrow">ROUND 1</div><h2 id="roundTitle">ENTER THE NETWORK</h2><p id="questionName">Question 1</p></div>
-          <div class="mission-badges"><span id="questionState" class="badge">WAITING</span><span id="scoreLabel" class="badge soft">10 pts</span></div>
-        </div>
-
-        <div id="videoCase" class="video-case hidden">
-          <div class="eyebrow">WATCH THE CASE</div><h3>Kasus Nisa di Grup Kelas</h3>
-          <video id="caseVideo" controls preload="metadata" poster="assets/video/digital-case-poster.svg"><source src="assets/video/digital-case.mp4" type="video/mp4"></video>
-          <div id="videoFallback" class="fallback hidden"><b>VIDEO TIDAK DAPAT DIPUTAR</b><br>Silakan gunakan teks kasus pada LKPD sebagai stimulus analisis.</div>
-        </div>
-
-        <div id="teacherQuestion" class="question-box">Buat atau resume sesi terlebih dahulu.</div>
-        <div id="teacherOptions" class="options-preview"></div>
-        <div class="notice">LKPD = <b>Thinking Space</b>. Team HP = <b>Answer Controller</b>. Teacher Laptop = <b>Mission Control</b>.</div>
-
-        <div class="answer-status-wrap">
-          <div class="answer-status-head"><h3>ANSWER STATUS</h3><strong id="lockedCount">0 / 6 Teams Locked</strong></div>
-          <div id="answerStatus" class="answer-status"></div>
-        </div>
-
-        <div class="control-bar">
-          <button id="pauseBtn" class="btn secondary">⏸ PAUSE MISSION</button>
-          <button id="openQuestionBtn" class="btn cyan">OPEN QUESTION</button>
-          <button id="revealBtn" class="btn primary" disabled>👁 REVEAL ANSWERS</button>
-          <button id="revealAnywayBtn" class="btn danger">Reveal Anyway</button>
-          <button id="nextBtn" class="btn success" disabled>NEXT QUESTION →</button>
-        </div>
-      </section>
-
-      <section id="finalMissionPanel" class="card hidden">
-        <div class="eyebrow">🏆 FINAL MISSION</div><h2>WHAT WOULD YOU DO?</h2>
-        <p>Kelompok menganalisis kasus integratif pada LKPD lalu melakukan Flash Pitch. Beri skor manual 0–10.</p>
-        <div id="finalScoreInputs" class="final-grid"></div>
-        <div class="control-bar"><button id="saveFinalBtn" class="btn primary">Simpan Final Mission</button><button id="completeSessionBtn" class="btn success">Complete Session</button></div>
-      </section>
-
-      <section class="card danger-zone">
-        <div><div class="eyebrow">SESSION CONTROL</div><h3>Reconnect / Reset</h3><p>Gunakan Replace Device jika HP kelompok berubah. Reset menghapus jawaban, skor, progres, dan posisi pion pada sesi ini.</p></div>
-        <button id="resetSessionBtn" class="btn danger">RESET SESSION</button>
-      </section>
-    </section>
-  </main>
-</div>
-
-<div id="toast" class="toast"></div>
-<script type="module" src="teacher-app.js?v=20261003-4"></script>
-<script type="module" src="teacher-checkpoint-flow-v2.js?v=20261003-7"></script>
-<script type="module" src="reveal-feedback-addon.js?v=20261003-8"></script>
+btn.onclick=async()=>{
+  err.textContent='';btn.disabled=true;btn.textContent='LOGIN...';
+  try{
+    await teacherLogin(email.value.trim(),password.value);
+    location.replace('teacher-home.html');
+  }catch(e){err.textContent=e.message||'Login gagal.';btn.disabled=false;btn.textContent='Login Teacher';}
+};
+password.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click();});
+</script>
 </body>
 </html>
