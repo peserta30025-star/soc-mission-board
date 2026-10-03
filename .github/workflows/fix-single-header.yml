@@ -1,0 +1,80 @@
+name: One-time single header patch
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-single-header.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'Add one-time single-header patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch teacher home to use one integrated header
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('teacher-home.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_nav = '''  <nav class="main-nav" aria-label="Navigasi guru">
+    <button id="homeBtn" class="nav-btn home active">Home</button>
+    <button id="teacherModeBtn" class="nav-btn teacher">🖥️ MODE GURU · INPUT & LOCK</button>
+    <button id="phoneModeBtn" class="nav-btn phone">📱 MODE HP SISWA · MISSION CONTROL</button>
+    <button id="logoutBtn" class="nav-btn">Logout</button>
+  </nav>'''
+          new_nav = '''  <nav class="main-nav" aria-label="Navigasi guru">
+    <button id="homeBtn" class="nav-btn home active">Home</button>
+    <button id="teacherModeBtn" class="nav-btn teacher">🖥️ MODE GURU · INPUT & LOCK</button>
+    <button id="phoneModeBtn" class="nav-btn phone">📱 MODE HP SISWA · MISSION CONTROL</button>
+    <button class="nav-btn" data-inner-go="setup">Teacher Setup</button>
+    <button class="nav-btn" data-inner-go="pretest">Pre-Test</button>
+    <button class="nav-btn" data-inner-go="posttest">Post-Test</button>
+    <button class="nav-btn" data-inner-go="scoreboard">Mission Progress</button>
+    <button class="nav-btn" data-inner-go="evaluation">Evaluation</button>
+    <button id="logoutBtn" class="nav-btn">Logout</button>
+  </nav>'''
+          if old_nav not in s:
+              raise SystemExit('nav block not found')
+          s = s.replace(old_nav, new_nav, 1)
+
+          s = s.replace("let mode='home',frameReady=false;", "let mode='home',frameReady=false,pendingInnerGo=null;", 1)
+
+          old_prepare = "function prepareFrame(){const d=frame.contentDocument;if(!d||!d.body)return false;frameReady=true;const nav=d.querySelector('#nav');"
+          new_prepare = "function prepareFrame(){const d=frame.contentDocument;if(!d||!d.body)return false;frameReady=true;const innerTop=d.querySelector('.topbar');if(innerTop)innerTop.style.display='none';const nav=d.querySelector('#nav');"
+          if old_prepare not in s:
+              raise SystemExit('prepareFrame signature not found')
+          s = s.replace(old_prepare, new_prepare, 1)
+
+          marker = "function openTeacher(){mode='teacher';setActive();showWorkspace();"
+          helper = "function openInner(go){pendingInnerGo=go;if(mode==='home')mode='teacher';setActive();showWorkspace();if(!frameReady){loading.classList.remove('hidden');frame.src='index.html?v=20261003-singleheader1';return;}const d=frame.contentDocument;const b=d?.querySelector(`#nav button[data-go=\"${go}\"]`);if(b)b.click();else showPage(d,`#page-${go}`);pendingInnerGo=null;}\n"
+          if marker not in s:
+              raise SystemExit('openTeacher marker not found')
+          s = s.replace(marker, helper + marker, 1)
+
+          old_load = "frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;if(!prepareFrame())return;loading.classList.add('hidden');if(mode==='teacher'){"
+          new_load = "frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;if(!prepareFrame())return;loading.classList.add('hidden');if(pendingInnerGo){const d=frame.contentDocument;const go=pendingInnerGo;pendingInnerGo=null;const b=d?.querySelector(`#nav button[data-go=\"${go}\"]`);if(b)b.click();else showPage(d,`#page-${go}`);return;}if(mode==='teacher'){"
+          if old_load not in s:
+              raise SystemExit('frame load marker not found')
+          s = s.replace(old_load, new_load, 1)
+
+          old_bind = "homeBtn.onclick=showHome;teacherBtn.onclick=openTeacher;phoneBtn.onclick=openPhone;logoutBtn.onclick=async()=>{"
+          new_bind = "homeBtn.onclick=showHome;teacherBtn.onclick=openTeacher;phoneBtn.onclick=openPhone;document.querySelectorAll('[data-inner-go]').forEach(b=>b.onclick=()=>openInner(b.dataset.innerGo));logoutBtn.onclick=async()=>{"
+          if old_bind not in s:
+              raise SystemExit('button bind marker not found')
+          s = s.replace(old_bind, new_bind, 1)
+
+          s = s.replace("index.html?v=20261003-integrated2", "index.html?v=20261003-singleheader1")
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add teacher-home.html
+          git commit -m "Use one integrated teacher header" || exit 0
+          git push
