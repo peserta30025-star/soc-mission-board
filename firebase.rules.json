@@ -26,6 +26,7 @@
           ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
         },
         "teamClaims": {
+          ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
           "$teamId": {
             ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
             ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || (auth.uid !== 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' && newData.child('uid').val() === auth.uid && ((!data.exists() && newData.child('pin').val() === root.child('sessions').child($code).child('private').child('teamPins').child($teamId).val()) || (data.child('uid').val() === auth.uid && newData.child('pin').val() === data.child('pin').val()))))",
@@ -38,12 +39,14 @@
           }
         },
         "presence": {
+          ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
           "$teamId": {
             ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
             ".write": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('teamClaims').child($teamId).child('uid').val() === auth.uid)"
           }
         },
         "answers": {
+          ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
           "$questionId": {
             "$teamId": {
               ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('teamClaims').child($teamId).child('uid').val() === auth.uid)",
@@ -52,6 +55,7 @@
           }
         },
         "revealPublic": {
+          ".read": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
           "$questionId": {
             ".read": "auth != null && (auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2' || root.child('sessions').child($code).child('meta').child('questionState').val() === 'REVEALED' || root.child('sessions').child($code).child('meta').child('questionState').val() === 'COMPLETED' || root.child('sessions').child($code).child('meta').child('status').val() === 'FINAL_MISSION' || root.child('sessions').child($code).child('meta').child('status').val() === 'COMPLETED')",
             ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
