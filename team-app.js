@@ -41,7 +41,12 @@ async function joinFromForm(auto=false){
     }
     teamName=`Kelompok ${Number(teamId.replace('team',''))}`;
     localStorage.setItem('soc_team_join',JSON.stringify({code,teamId,pin:teamPin}));
-    await setupPresence(user.uid);
+    try{
+      await setupPresence(user.uid);
+    }catch(err){
+      console.error('Presence rejected:',err);
+      throw new Error('PIN sudah diterima, tetapi koneksi Team belum diizinkan oleh Firebase Rules bagian presence.');
+    }
     $('#joinView').classList.add('hidden');$('#missionView').classList.remove('hidden');
     $('#teamName').textContent=teamName.toUpperCase();$('#teamSession').textContent=`✅ Connected • Game ${code}`;
     attachSessionListeners();
@@ -54,8 +59,12 @@ async function joinFromForm(auto=false){
 
 async function setupPresence(uid){
   const pRef=sessionRef(code,`presence/${teamId}`);
-  await onDisconnect(pRef).set({state:'offline',uid,lastSeen:serverTimestamp()});
   await set(pRef,{state:'online',uid,lastSeen:serverTimestamp()});
+  try{
+    await onDisconnect(pRef).set({state:'offline',uid,lastSeen:serverTimestamp()});
+  }catch(err){
+    console.warn('onDisconnect registration skipped:',err);
+  }
 }
 
 function attachSessionListeners(){
