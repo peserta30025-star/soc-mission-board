@@ -6,16 +6,26 @@ import {
 
 const $=(s)=>document.querySelector(s);
 let code='';let teamId='';let teamName='';let teamPin='';let meta=null;let question=null;let selected=null;let ownAnswer=null;let revealData=null;
-let unsubs=[];let questionToken='';let answerUnsub=null;let revealUnsub=null;
+let unsubs=[];let questionToken='';let answerUnsub=null;let revealUnsub=null;let firebaseConnected=false;
 
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function safe(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function safe(v=''){return String(v).replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
 function currentKey(){return meta?currentQuestionKey(meta):'';}
 function clearUnsubs(){unsubs.forEach(fn=>{try{fn();}catch{}});unsubs=[];if(answerUnsub){answerUnsub();answerUnsub=null;}if(revealUnsub){revealUnsub();revealUnsub=null;}}
 
+async function refreshPresence(){
+  if(!firebaseConnected||!code||!teamId||!auth.currentUser)return;
+  try{await setupPresence(auth.currentUser.uid);}catch(err){console.warn('Presence refresh skipped:',err);}
+}
+
 onValue(ref(db,'.info/connected'),snap=>{
-  const online=snap.val()===true;const b=$('#connectionBadge');b.textContent=online?'🟢 Online':'🟡 Reconnecting';b.className='connection-badge '+(online?'online':'reconnecting');
+  const online=snap.val()===true;firebaseConnected=online;
+  const b=$('#connectionBadge');b.textContent=online?'🟢 Online':'🟡 Reconnecting';b.className='connection-badge '+(online?'online':'reconnecting');
+  if(online)refreshPresence();
 });
+
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshPresence();});
+window.addEventListener('focus',()=>refreshPresence());
 
 $('#joinBtn').onclick=()=>joinFromForm();
 $('#leaveBtn').onclick=async()=>{localStorage.removeItem('soc_team_join');clearUnsubs();await logout();location.reload();};
