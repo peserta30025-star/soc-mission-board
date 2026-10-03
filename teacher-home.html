@@ -8,161 +8,91 @@
 <meta http-equiv="Expires" content="0">
 <title>SOC Mission Board — Teacher Home</title>
 <style>
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fffaf0}
-#site{width:100%;height:100%;border:0;display:block}
-.loading{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#fffaf0;color:#15527d;font:800 20px/1.4 system-ui,sans-serif}
-.loading.hidden{display:none}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-rounded,"Trebuchet MS",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#fff9ee;color:#174f78}body{overflow:hidden}.hidden{display:none!important}
+.topbar{height:88px;display:flex;align-items:center;gap:18px;padding:12px 20px;background:#fffaf2;border-bottom:1px solid #dbeaf1;box-shadow:0 6px 20px rgba(27,79,112,.06);position:relative;z-index:40}.brand{display:flex;align-items:center;gap:12px;min-width:310px}.brand-badge{width:48px;height:48px;border-radius:15px;background:#ffd166;display:grid;place-items:center;font-size:25px;box-shadow:0 8px 18px rgba(255,177,22,.22)}.brand b{font-size:20px;letter-spacing:.03em}.brand small{display:block;color:#7a91a2;font-weight:700;margin-top:2px}.main-nav{display:flex;align-items:center;gap:10px;flex:1;justify-content:flex-end}.nav-btn{border:1px solid #d4e5ed;background:#fff;color:#174f78;border-radius:17px;padding:13px 18px;font-weight:900;font-size:14px;cursor:pointer;transition:.18s transform,.18s box-shadow}.nav-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,91,134,.12)}.nav-btn.home{order:-3}.nav-btn.teacher{background:#1a98d2;color:#fff;border-color:#1a98d2}.nav-btn.phone{background:#0f5b86;color:#fff;border-color:#0f5b86}.nav-btn.active{outline:3px solid rgba(255,209,102,.55)}
+.cover{height:calc(100vh - 88px);position:relative;overflow:auto;background:linear-gradient(180deg,#eefaff 0%,#f8fcf7 54%,#fff6dc 100%)}.sun{position:absolute;width:170px;height:170px;border-radius:50%;background:#ffe49a;left:-42px;top:-44px;opacity:.82}.cloud{position:absolute;background:#fff;border-radius:999px;opacity:.82;filter:drop-shadow(0 8px 16px rgba(78,139,171,.08))}.cloud:before,.cloud:after{content:"";position:absolute;background:inherit;border-radius:50%}.cloud.c1{width:155px;height:45px;top:105px;left:9%;animation:drift 18s ease-in-out infinite}.cloud.c1:before{width:63px;height:63px;left:24px;bottom:6px}.cloud.c1:after{width:80px;height:80px;left:68px;bottom:3px}.cloud.c2{width:140px;height:40px;top:82px;right:8%;animation:drift 22s ease-in-out infinite reverse}.cloud.c2:before{width:55px;height:55px;left:22px;bottom:4px}.cloud.c2:after{width:68px;height:68px;left:65px;bottom:2px}@keyframes drift{50%{transform:translateX(28px)}}
+.hero-wrap{width:min(1440px,96vw);margin:0 auto;padding:28px 0 24px;display:grid;grid-template-columns:.78fr 1.5fr;gap:30px;align-items:center;position:relative;z-index:2}.hero-copy{padding:18px 4px 18px 10px}.eyebrow{color:#d98900;font-weight:950;letter-spacing:.18em;font-size:13px}.hero-copy h1{font-size:clamp(48px,6.2vw,94px);line-height:.88;margin:18px 0 16px;color:#14557f;letter-spacing:-.04em}.hero-copy h1 span{display:block;color:#20a2dc}.mission-pill{display:inline-flex;align-items:center;gap:9px;padding:10px 15px;border-radius:999px;background:#fff;border:1px solid #cfe6f1;font-weight:950;box-shadow:0 8px 20px rgba(35,120,159,.08)}.tagline{font-size:24px;color:#169dd6;margin:24px 0 8px}.hero-copy p{font-size:17px;line-height:1.65;color:#527994;margin:0;max-width:580px}.top-hint{margin-top:22px;padding:13px 15px;border-radius:16px;background:rgba(255,255,255,.76);border:1px dashed #8bcbe8;color:#527994;font-weight:750;max-width:560px}
+.adventure{position:relative;border:2px solid #bfe1ef;border-radius:34px;background:#dff5ff;box-shadow:0 22px 60px rgba(21,92,132,.16);overflow:hidden;min-height:580px}.adventure-head{position:absolute;z-index:5;left:28px;top:24px;padding:12px 18px;border-radius:18px;background:rgba(255,255,255,.92);box-shadow:0 8px 24px rgba(30,100,136,.12)}.adventure-head b{display:block;font-size:20px}.adventure-head small{color:#7190a4;font-weight:800}.adventure svg{display:block;width:100%;height:100%;min-height:580px}.float-card{position:absolute;z-index:7;background:rgba(255,255,255,.94);border:1px solid #d7eaf2;border-radius:16px;padding:10px 13px;font-weight:900;box-shadow:0 10px 28px rgba(24,89,124,.13);animation:floaty 3.2s ease-in-out infinite}.float-card.fc1{right:24px;top:24px;color:#148bc2}.float-card.fc2{left:30px;bottom:24px;color:#299d68;animation-delay:.8s}.float-card.fc3{right:28px;bottom:28px;color:#e58c00;animation-delay:1.4s}@keyframes floaty{50%{transform:translateY(-8px)}}
+.workspace{height:calc(100vh - 88px);background:white}.workspace iframe{width:100%;height:100%;border:0;display:block}.loading{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#fff9ee;color:#15527d;font-size:20px;font-weight:900}.loading.hidden{display:none}.logout-screen{position:fixed;inset:0;z-index:300;background:#fff9ee;display:none;place-items:center;color:#15527d;font-weight:900;font-size:20px}.logout-screen.show{display:grid}
+@media(max-width:1100px){.topbar{height:auto;flex-wrap:wrap}.brand{min-width:260px}.main-nav{width:100%;justify-content:center;flex-wrap:wrap}.cover,.workspace{height:calc(100vh - 142px)}.hero-wrap{grid-template-columns:1fr;padding-top:20px}.hero-copy{text-align:center}.hero-copy p,.top-hint{margin-left:auto;margin-right:auto}.adventure{min-height:500px}.adventure svg{min-height:500px}}
+@media(max-width:680px){.topbar{padding:10px 12px}.brand{min-width:0;flex:1}.brand small{display:none}.main-nav{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.nav-btn{padding:11px 8px;font-size:12px}.cover,.workspace{height:calc(100vh - 188px)}.hero-wrap{width:94vw}.hero-copy h1{font-size:54px}.tagline{font-size:20px}.adventure{min-height:420px;border-radius:24px}.adventure svg{min-height:420px}.float-card{font-size:11px}.adventure-head b{font-size:16px}}
 </style>
 </head>
 <body>
-<div id="loading" class="loading">Membuka SOC Mission Board Teacher...</div>
-<iframe id="site" title="SOC Mission Board Teacher Home" src="about:blank"></iframe>
+<header id="topbar" class="topbar">
+  <div class="brand">
+    <div class="brand-badge">🧭</div>
+    <div><b>SOC MISSION BOARD</b><small>Teacher Adventure Hub</small></div>
+  </div>
+  <nav class="main-nav" aria-label="Navigasi guru">
+    <button id="homeBtn" class="nav-btn home active">Home</button>
+    <button id="teacherModeBtn" class="nav-btn teacher">🖥️ MODE GURU · INPUT & LOCK</button>
+    <button id="phoneModeBtn" class="nav-btn phone">📱 MODE HP SISWA · MISSION CONTROL</button>
+    <button id="logoutBtn" class="nav-btn">Logout</button>
+  </nav>
+</header>
+
+<section id="cover" class="cover">
+  <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+  <div class="hero-wrap">
+    <div class="hero-copy">
+      <div class="eyebrow">IPS KELAS IX · INTERAKSI MASYARAKAT ABAD KE-21</div>
+      <h1>SOC <span>MISSION BOARD</span></h1>
+      <div class="mission-pill">🎯 DIGITAL SOCIETY MISSION</div>
+      <h2 class="tagline">Think. Connect. Respect.</h2>
+      <p>Masuki petualangan tiga round, pecahkan sembilan tantangan masyarakat digital, dan bawa pion kelompok menuju checkpoint hingga FINISH.</p>
+      <div class="top-hint">✨ Halaman ini hanya menjadi <b>Home</b>. Klik <b>MODE GURU</b> untuk langsung ke Board atau <b>MODE HP SISWA</b> untuk membuka Mission Control yang terintegrasi.</div>
+    </div>
+    <div class="adventure" aria-label="Animasi petualangan Mission Board">
+      <div class="adventure-head"><b>🗺️ Mission Adventure</b><small>START → CP1 → CP2 → FINISH</small></div>
+      <div class="float-card fc1">🤝 TEAMWORK</div>
+      <div class="float-card fc2">💡 THINK SMART</div>
+      <div class="float-card fc3">🏆 REACH FINISH</div>
+      <svg viewBox="0 0 1000 620" role="img" aria-label="Jalur petualangan Mission Board dengan pion bergerak">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfefff"/><stop offset="1" stop-color="#eefbf5"/></linearGradient>
+          <linearGradient id="river" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8cd8f2"/><stop offset="1" stop-color="#4ebce7"/></linearGradient>
+          <filter id="shadow"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#285b73" flood-opacity=".2"/></filter>
+          <path id="route" d="M115,490 C230,525 260,400 350,365 S505,340 545,245 S705,125 865,165"/>
+        </defs>
+        <rect width="1000" height="620" fill="url(#sky)"/><circle cx="850" cy="82" r="54" fill="#ffe28a" opacity=".82"/>
+        <path d="M0 290 L140 155 L255 292 Z" fill="#9cc8bf"/><path d="M110 290 L280 105 L455 292 Z" fill="#7eb3ab"/><path d="M330 292 L485 145 L640 292 Z" fill="#98c4b5"/><path d="M610 292 L790 125 L980 292 Z" fill="#83b7aa"/><path d="M212 182 L280 105 L345 175 L306 160 L280 144 L253 163 Z" fill="#f7fbf7" opacity=".95"/>
+        <path d="M0 430 C160 365 300 450 430 420 S720 350 1000 430 L1000 620 L0 620 Z" fill="#a9dda1"/><path d="M0 500 C150 455 240 575 380 535 S610 455 760 510 S920 565 1000 525 L1000 620 L0 620 Z" fill="url(#river)" opacity=".82"/>
+        <g opacity=".95"><circle cx="55" cy="430" r="30" fill="#4ca66a"/><circle cx="78" cy="424" r="25" fill="#5db778"/><circle cx="930" cy="355" r="34" fill="#479d64"/><circle cx="958" cy="360" r="27" fill="#61b97a"/><rect x="51" y="448" width="8" height="45" rx="4" fill="#7a5a38"/><rect x="927" y="382" width="9" height="52" rx="4" fill="#7a5a38"/></g>
+        <use href="#route" fill="none" stroke="#fff7df" stroke-width="54" stroke-linecap="round" filter="url(#shadow)"/><use href="#route" fill="none" stroke="#e2a83a" stroke-width="7" stroke-dasharray="16 17" stroke-linecap="round"/>
+        <g filter="url(#shadow)"><circle cx="115" cy="490" r="52" fill="#0f5b86" stroke="#fff" stroke-width="7"/><text x="115" y="481" text-anchor="middle" font-size="35">🚩</text><text x="115" y="518" text-anchor="middle" font-size="19" font-weight="900" fill="#fff">START</text></g>
+        <g filter="url(#shadow)"><circle cx="350" cy="365" r="52" fill="#fff" stroke="#2ba5d8" stroke-width="7"/><text x="350" y="358" text-anchor="middle" font-size="30">◆</text><text x="350" y="393" text-anchor="middle" font-size="20" font-weight="900" fill="#15527d">CP 1</text></g>
+        <g filter="url(#shadow)"><circle cx="545" cy="245" r="52" fill="#fff8df" stroke="#eda91d" stroke-width="7"/><text x="545" y="238" text-anchor="middle" font-size="30">◆</text><text x="545" y="273" text-anchor="middle" font-size="20" font-weight="900" fill="#15527d">CP 2</text></g>
+        <g filter="url(#shadow)"><circle cx="865" cy="165" r="58" fill="#fff" stroke="#8f55c5" stroke-width="8"/><text x="865" y="153" text-anchor="middle" font-size="38">🏆</text><text x="865" y="195" text-anchor="middle" font-size="19" font-weight="900" fill="#15527d">FINISH</text></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#4aa3ff" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">1</text><animateMotion dur="15s" repeatCount="indefinite" begin="0s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#56df9b" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">2</text><animateMotion dur="15s" repeatCount="indefinite" begin="-2.5s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ffd166" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">3</text><animateMotion dur="15s" repeatCount="indefinite" begin="-5s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ff6b6b" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">4</text><animateMotion dur="15s" repeatCount="indefinite" begin="-7.5s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#b990ff" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">5</text><animateMotion dur="15s" repeatCount="indefinite" begin="-10s"><mpath href="#route"/></animateMotion></g>
+        <g filter="url(#shadow)"><circle r="17" fill="#ff9f43" stroke="#fff" stroke-width="5"/><text y="6" text-anchor="middle" font-size="13" font-weight="900" fill="#0c3d62">6</text><animateMotion dur="15s" repeatCount="indefinite" begin="-12.5s"><mpath href="#route"/></animateMotion></g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="workspace" class="workspace hidden"><iframe id="site" title="SOC Mission Board Workspace" src="about:blank"></iframe></section>
+<div id="loading" class="loading">Membuka SOC Mission Board Teacher...</div><div id="logoutScreen" class="logout-screen">Keluar dari akun guru...</div>
 <script type="module">
 import {auth,TEACHER_UID,logout} from './firebase-core.js';
-
-const frame=document.getElementById('site');
-const loading=document.getElementById('loading');
-let currentMode='teacher';
-
-function showPage(d,id){
-  d.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const target=d.querySelector(id);
-  if(target)target.classList.add('active');
-  d.defaultView?.scrollTo?.(0,0);
-}
-
-function ensurePhoneControl(d){
-  let page=d.querySelector('#page-phone-control');
-  if(page)return page;
-  const main=d.querySelector('main');
-  if(!main)return null;
-  page=d.createElement('section');
-  page.id='page-phone-control';
-  page.className='page';
-  page.style.cssText='padding:0!important;max-width:none!important;width:100%!important;';
-  page.innerHTML=`<div style="padding:20px 24px 8px"><div class="eyebrow">MODE HP SISWA</div><h2 style="margin:4px 0 8px">Teacher Mission Control</h2><p class="muted" style="margin:0 0 12px">Kelompok menjawab melalui HP. Teacher Setup, Pre-Test, Post-Test, Mission Progress, dan Evaluation tetap tersedia pada menu atas.</p></div><iframe id="integratedTeacherControl" title="Teacher Mission Control" src="teacher-control.html?v=20261003-integrated1" style="display:block;width:100%;height:calc(100vh - 210px);min-height:700px;border:0;background:#eef8fd"></iframe>`;
-  main.appendChild(page);
-  const controlFrame=page.querySelector('#integratedTeacherControl');
-  controlFrame.addEventListener('load',()=>{
-    try{
-      const cd=controlFrame.contentDocument;
-      const top=cd?.querySelector('.topbar');
-      if(top)top.style.display='none';
-      const mainEl=cd?.querySelector('main');
-      if(mainEl){mainEl.style.paddingTop='18px';mainEl.style.maxWidth='none';}
-    }catch(e){console.warn(e);}
-  });
-  return page;
-}
-
-function setModeButtons(d){
-  const guru=d.querySelector('#integratedModeGuru');
-  const hp=d.querySelector('#integratedModeHp');
-  if(guru){
-    guru.style.background=currentMode==='teacher'?'#1799d0':'#fff';
-    guru.style.color=currentMode==='teacher'?'#fff':'#174f78';
-  }
-  if(hp){
-    hp.style.background=currentMode==='phone'?'#0f5b86':'#fff';
-    hp.style.color=currentMode==='phone'?'#fff':'#174f78';
-  }
-}
-
-function openTeacherBoard(d){
-  currentMode='teacher';
-  setModeButtons(d);
-  const boardBtn=d.querySelector('#nav button[data-go="board"]');
-  if(boardBtn){boardBtn.click();return;}
-  showPage(d,'#page-board');
-}
-
-function openPhoneControl(d){
-  currentMode='phone';
-  setModeButtons(d);
-  ensurePhoneControl(d);
-  showPage(d,'#page-phone-control');
-}
-
-function decorateTeacherHome(){
-  try{
-    const d=frame.contentDocument;
-    if(!d || !d.body)return false;
-
-    const nav=d.querySelector('#nav');
-    if(nav && !d.querySelector('#integratedModeGuru')){
-      const guru=d.createElement('button');
-      guru.id='integratedModeGuru';
-      guru.textContent='🖥️ Mode Guru';
-      guru.title='Guru mengisi dan mengunci jawaban kelompok dari laptop';
-      guru.style.cssText='font-weight:900;border:2px solid #1799d0;';
-      guru.onclick=()=>openTeacherBoard(d);
-
-      const hp=d.createElement('button');
-      hp.id='integratedModeHp';
-      hp.textContent='📱 Mode HP';
-      hp.title='Kelompok menjawab dari HP, guru memakai Mission Control';
-      hp.style.cssText='font-weight:900;border:2px solid #0f5b86;';
-      hp.onclick=()=>openPhoneControl(d);
-
-      nav.insertBefore(hp,nav.firstChild);
-      nav.insertBefore(guru,nav.firstChild);
-
-      const out=d.createElement('button');
-      out.id='teacherLogoutNav';
-      out.textContent='Logout';
-      out.onclick=async()=>{await logout();window.location.replace('teacher.html');};
-      nav.appendChild(out);
-
-      const boardBtn=nav.querySelector('button[data-go="board"]');
-      if(boardBtn){
-        boardBtn.addEventListener('click',e=>{
-          if(currentMode==='phone'){
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            openPhoneControl(d);
-          }
-        },true);
-      }
-    }
-
-    ensurePhoneControl(d);
-    setModeButtons(d);
-
-    const start=d.querySelector('#startGameBtn');
-    if(start && !start.dataset.teacherIntegrated){
-      start.dataset.teacherIntegrated='1';
-      start.textContent='🚀 Mulai Permainan';
-      start.addEventListener('click',e=>{
-        if(currentMode==='phone'){
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          openPhoneControl(d);
-        }
-      },true);
-    }
-
-    loading.classList.add('hidden');
-    return true;
-  }catch(err){
-    console.error(err);
-    loading.textContent='Gagal membuka Teacher Home. Silakan refresh halaman.';
-    return false;
-  }
-}
-
-frame.addEventListener('load',()=>{
-  if(frame.src==='about:blank')return;
-  decorateTeacherHome();
-});
-
-if(typeof auth.authStateReady==='function') await auth.authStateReady();
-if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
-  location.replace('teacher.html');
-}else{
-  frame.src='index.html?v=20261003-integrated1';
-}
-
-setTimeout(()=>{if(!loading.classList.contains('hidden'))decorateTeacherHome();},2500);
+const cover=document.getElementById('cover'),workspace=document.getElementById('workspace'),frame=document.getElementById('site'),loading=document.getElementById('loading'),logoutScreen=document.getElementById('logoutScreen');
+const homeBtn=document.getElementById('homeBtn'),teacherBtn=document.getElementById('teacherModeBtn'),phoneBtn=document.getElementById('phoneModeBtn'),logoutBtn=document.getElementById('logoutBtn');
+let mode='home',frameReady=false;
+function setActive(){[homeBtn,teacherBtn,phoneBtn].forEach(x=>x.classList.remove('active'));(mode==='home'?homeBtn:mode==='teacher'?teacherBtn:phoneBtn).classList.add('active');}
+function showHome(){mode='home';setActive();workspace.classList.add('hidden');cover.classList.remove('hidden');}
+function showWorkspace(){cover.classList.add('hidden');workspace.classList.remove('hidden');}
+function showPage(d,id){d.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const t=d.querySelector(id);if(t)t.classList.add('active');d.defaultView?.scrollTo?.(0,0);}
+function ensurePhoneControl(d){let page=d.querySelector('#page-phone-control');if(page)return page;const main=d.querySelector('main');if(!main)return null;page=d.createElement('section');page.id='page-phone-control';page.className='page';page.style.cssText='padding:0!important;max-width:none!important;width:100%!important;';page.innerHTML=`<div style="padding:20px 24px 8px"><div class="eyebrow">MODE HP SISWA</div><h2 style="margin:4px 0 8px">Teacher Mission Control</h2><p class="muted" style="margin:0 0 12px">Kelompok menjawab melalui HP. Teacher Setup, Pre-Test, Post-Test, Mission Progress, dan Evaluation tetap tersedia pada menu atas.</p></div><iframe id="integratedTeacherControl" title="Teacher Mission Control" src="teacher-control.html?v=20261003-integrated2" style="display:block;width:100%;height:calc(100vh - 220px);min-height:680px;border:0;background:#eef8fd"></iframe>`;main.appendChild(page);const cf=page.querySelector('#integratedTeacherControl');cf.addEventListener('load',()=>{try{const cd=cf.contentDocument;const top=cd?.querySelector('.topbar');if(top)top.style.display='none';const m=cd?.querySelector('main');if(m){m.style.paddingTop='18px';m.style.maxWidth='none';}}catch{}});return page;}
+function prepareFrame(){const d=frame.contentDocument;if(!d||!d.body)return false;frameReady=true;const nav=d.querySelector('#nav');const innerHome=nav?.querySelector('button[data-go="home"]');if(innerHome&&!innerHome.dataset.outerHome){innerHome.dataset.outerHome='1';innerHome.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();showHome();},true);}const brand=d.querySelector('.brand');if(brand&&!brand.dataset.outerHome){brand.dataset.outerHome='1';brand.style.cursor='pointer';brand.addEventListener('click',e=>{e.preventDefault();showHome();},true);}ensurePhoneControl(d);return true;}
+function openTeacher(){mode='teacher';setActive();showWorkspace();if(!frameReady){loading.classList.remove('hidden');frame.src='index.html?v=20261003-integrated2';return;}const d=frame.contentDocument;const b=d?.querySelector('#nav button[data-go="board"]');if(b)b.click();else showPage(d,'#page-board');}
+function openPhone(){mode='phone';setActive();showWorkspace();if(!frameReady){loading.classList.remove('hidden');frame.src='index.html?v=20261003-integrated2';return;}const d=frame.contentDocument;ensurePhoneControl(d);showPage(d,'#page-phone-control');}
+frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;if(!prepareFrame())return;loading.classList.add('hidden');if(mode==='teacher'){const d=frame.contentDocument;const b=d?.querySelector('#nav button[data-go="board"]');if(b)b.click();else showPage(d,'#page-board');}else if(mode==='phone'){const d=frame.contentDocument;ensurePhoneControl(d);showPage(d,'#page-phone-control');}});
+homeBtn.onclick=showHome;teacherBtn.onclick=openTeacher;phoneBtn.onclick=openPhone;logoutBtn.onclick=async()=>{document.getElementById('topbar').style.display='none';cover.classList.add('hidden');workspace.classList.add('hidden');loading.classList.add('hidden');logoutScreen.classList.add('show');try{await logout();}finally{location.replace('teacher.html');}};
+if(typeof auth.authStateReady==='function')await auth.authStateReady();if(!auth.currentUser||auth.currentUser.uid!==TEACHER_UID){location.replace('teacher.html');}else{loading.classList.add('hidden');showHome();}
 </script>
 </body>
 </html>
