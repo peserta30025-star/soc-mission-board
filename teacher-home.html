@@ -94,5 +94,6 @@ frame.addEventListener('load',()=>{if(frame.src==='about:blank')return;if(!prepa
 homeBtn.onclick=showHome;teacherBtn.onclick=openTeacher;phoneBtn.onclick=openPhone;logoutBtn.onclick=async()=>{document.getElementById('topbar').style.display='none';cover.classList.add('hidden');workspace.classList.add('hidden');loading.classList.add('hidden');logoutScreen.classList.add('show');try{await logout();}finally{location.replace('teacher.html');}};
 if(typeof auth.authStateReady==='function')await auth.authStateReady();if(!auth.currentUser||auth.currentUser.uid!==TEACHER_UID){location.replace('teacher.html');}else{loading.classList.add('hidden');showHome();}
 </script>
+<script src="adventure-music.js?v=20261003-adventure1"></script>
 </body>
 </html>
