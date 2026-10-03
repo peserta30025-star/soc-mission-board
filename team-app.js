@@ -27,15 +27,16 @@ async function joinFromForm(auto=false){
   teamId=saved?.teamId||$('#teamSelect').value;
   teamPin=saved?.pin||$('#teamPinInput').value.replace(/\D/g,'').slice(0,4);
   if(code.length!==6||teamPin.length!==4){if(!auto)$('#joinError').textContent='Game Code harus 6 digit dan PIN harus 4 digit.';return;}
+  const joinBtn=$('#joinBtn');
+  if(joinBtn){joinBtn.disabled=true;joinBtn.textContent='CONNECTING...';}
   try{
     const user=await teamAnonymousLogin();
     const metaSnap=await get(sessionRef(code,'meta'));
     if(!metaSnap.exists())throw new Error('Game Code tidak ditemukan.');
-    const existingUidSnap=await get(sessionRef(code,`teamClaims/${teamId}/uid`));
-    if(existingUidSnap.exists()&&existingUidSnap.val()!==user.uid)throw new Error('TEAM ALREADY CONNECTED. Minta Teacher memilih Replace Device.');
     try{
       await set(sessionRef(code,`teamClaims/${teamId}`),{uid:user.uid,pin:teamPin,claimedAt:serverTimestamp()});
-    }catch{
+    }catch(err){
+      console.error('Team claim rejected:',err);
       throw new Error('PIN salah atau Team sudah dipakai perangkat lain. Periksa PIN atau minta Teacher memilih Replace Device.');
     }
     teamName=`Kelompok ${Number(teamId.replace('team',''))}`;
@@ -44,7 +45,11 @@ async function joinFromForm(auto=false){
     $('#joinView').classList.add('hidden');$('#missionView').classList.remove('hidden');
     $('#teamName').textContent=teamName.toUpperCase();$('#teamSession').textContent=`✅ Connected • Game ${code}`;
     attachSessionListeners();
-  }catch(err){if(!auto)$('#joinError').textContent=err.message||'Tidak dapat join mission.';else localStorage.removeItem('soc_team_join');}
+  }catch(err){
+    if(!auto)$('#joinError').textContent=err.message||'Tidak dapat join mission.';else localStorage.removeItem('soc_team_join');
+  }finally{
+    if(joinBtn&&!$('#joinView').classList.contains('hidden')){joinBtn.disabled=false;joinBtn.textContent='JOIN MISSION';}
+  }
 }
 
 async function setupPresence(uid){
