@@ -10,7 +10,7 @@ const $ = (s) => document.querySelector(s);
 const TEAMS = Array.from({length: 6}, (_, i) => ({ id: `team${i+1}`, name: `Kelompok ${i+1}`, color: TEAM_COLORS[i] }));
 let sessionCode = '';
 let session = null;
-let unsubSession = null;
+let unsubSession = [];
 let showPins = false;
 let answerKeysReady = false;
 
@@ -18,6 +18,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show'
 function safe(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 function qKey(meta=session?.meta||{}){return currentQuestionKey(meta);}
 function currentPublicQuestion(){if(!session?.meta)return null;return session.publicQuestions?.[qKey()]||null;}
+function clearSessionListeners(){unsubSession.forEach(fn=>{try{fn();}catch{}});unsubSession=[];}
 
 async function loadKeyStatus(){
   const snap = await get(teacherConfigRef('answerKeys'));
@@ -33,7 +34,7 @@ $('#teacherLoginBtn').onclick = async () => {
   }catch(err){$('#loginError').textContent=err.message||'Login gagal.';}
 };
 
-$('#logoutBtn').onclick = async()=>{await logout();location.reload();};
+$('#logoutBtn').onclick = async()=>{clearSessionListeners();await logout();location.reload();};
 
 watchAuth(async(user)=>{
   if(!user){$('#loginView').classList.remove('hidden');$('#teacherApp').classList.add('hidden');return;}
@@ -71,19 +72,28 @@ async function createSession(){
   };
   await set(sessionRef(code),payload);
   localStorage.setItem('soc_teacher_session',code);
-  attachSession(code);toast(`Game Code ${code} dibuat.`);
+  await attachSession(code);toast(`Game Code ${code} dibuat.`);
 }
 
 $('#createSessionBtn').onclick=()=>createSession().catch(e=>toast(e.message));
-$('#resumeBtn').onclick=()=>{const c=$('#resumeCode').value.replace(/\D/g,'').slice(0,6);if(c.length!==6)return toast('Masukkan 6 digit Game Code.');attachSession(c);};
+$('#resumeBtn').onclick=()=>{const c=$('#resumeCode').value.replace(/\D/g,'').slice(0,6);if(c.length!==6)return toast('Masukkan 6 digit Game Code.');attachSession(c).catch(e=>toast(e.message));};
 
 async function attachSession(code){
   const snap=await get(sessionRef(code,'meta'));
   if(!snap.exists()){toast('Session tidak ditemukan.');return;}
   sessionCode=code;localStorage.setItem('soc_teacher_session',code);$('#resumeCode').value=code;
-  if(unsubSession)unsubSession();
-  unsubSession=onValue(sessionRef(code),(s)=>{session=s.val();renderAll();});
+  clearSessionListeners();
+  session={meta:snap.val(),publicQuestions:{},teams:{},teamClaims:{},presence:{},answers:{},revealPublic:{},private:{}};
+  const paths=['meta','publicQuestions','teams','teamClaims','presence','answers','revealPublic','private'];
+  paths.forEach(path=>{
+    const unsub=onValue(sessionRef(code,path),(s)=>{
+      session[path]=s.val()||{};
+      renderAll();
+    },(err)=>toast(`Gagal membaca ${path}: ${err.message}`));
+    unsubSession.push(unsub);
+  });
   $('#dashboard').classList.remove('hidden');
+  renderAll();
 }
 
 function connectedTeams(){return TEAMS.filter(t=>session?.teamClaims?.[t.id]?.uid);}
