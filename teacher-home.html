@@ -13,23 +13,17 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fffaf0}#si
 </head>
 <body>
 <div id="loading" class="loading">Membuka SOC Mission Board Teacher...</div>
-<iframe id="site" title="SOC Mission Board Teacher Home" src="index.html?v=20261003-teacher"></iframe>
+<iframe id="site" title="SOC Mission Board Teacher Home" src="about:blank"></iframe>
 <script type="module">
 import {auth,TEACHER_UID,logout} from './firebase-core.js';
-
-if(typeof auth.authStateReady==='function') await auth.authStateReady();
-if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
-  location.replace('teacher.html');
-}
 
 const frame=document.getElementById('site');
 const loading=document.getElementById('loading');
 
-frame.addEventListener('load',()=>{
+function decorateTeacherHome(){
   try{
     const d=frame.contentDocument;
-    const w=frame.contentWindow;
-    if(!d)return;
+    if(!d || !d.body)return false;
 
     const nav=d.querySelector('#nav');
     if(nav && !d.querySelector('#teacherMissionControlNav')){
@@ -74,11 +68,29 @@ frame.addEventListener('load',()=>{
     }
 
     loading.classList.add('hidden');
+    return true;
   }catch(err){
     console.error(err);
     loading.textContent='Gagal membuka Teacher Home. Silakan refresh halaman.';
+    return false;
   }
+}
+
+frame.addEventListener('load',()=>{
+  if(frame.src==='about:blank')return;
+  decorateTeacherHome();
 });
+
+if(typeof auth.authStateReady==='function') await auth.authStateReady();
+if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
+  location.replace('teacher.html');
+}else{
+  frame.src='index.html?v=20261003-teacher2';
+}
+
+setTimeout(()=>{
+  if(!loading.classList.contains('hidden'))decorateTeacherHome();
+},2500);
 </script>
 </body>
 </html>
