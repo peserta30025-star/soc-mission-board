@@ -1,17 +1,17 @@
 import {
   auth, db, teamAnonymousLogin, logout,
-  ref, get, set, update, onValue, onDisconnect, serverTimestamp,
+  ref, get, set, onValue, onDisconnect, serverTimestamp,
   sessionRef, currentQuestionKey
 } from './firebase-core.js';
 
 const $=(s)=>document.querySelector(s);
 let code='';let teamId='';let teamName='';let teamPin='';let meta=null;let question=null;let selected=null;let ownAnswer=null;let revealData=null;
-let unsubs=[];let questionToken='';
+let unsubs=[];let questionToken='';let answerUnsub=null;let revealUnsub=null;
 
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 function safe(v=''){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 function currentKey(){return meta?currentQuestionKey(meta):'';}
-function clearUnsubs(){unsubs.forEach(fn=>{try{fn();}catch{}});unsubs=[];}
+function clearUnsubs(){unsubs.forEach(fn=>{try{fn();}catch{}});unsubs=[];if(answerUnsub){answerUnsub();answerUnsub=null;}if(revealUnsub){revealUnsub();revealUnsub=null;}}
 
 onValue(ref(db,'.info/connected'),snap=>{
   const online=snap.val()===true;const b=$('#connectionBadge');b.textContent=online?'🟢 Online':'🟡 Reconnecting';b.className='connection-badge '+(online?'online':'reconnecting');
@@ -31,10 +31,13 @@ async function joinFromForm(auto=false){
     const user=await teamAnonymousLogin();
     const metaSnap=await get(sessionRef(code,'meta'));
     if(!metaSnap.exists())throw new Error('Game Code tidak ditemukan.');
-    const claimRef=sessionRef(code,`teamClaims/${teamId}`);
-    const existing=await get(claimRef);
-    if(existing.exists()&&existing.val()?.uid!==user.uid)throw new Error('TEAM ALREADY CONNECTED. Minta Teacher memilih Replace Device.');
-    await set(claimRef,{uid:user.uid,pin:teamPin,claimedAt:serverTimestamp()});
+    const existingUidSnap=await get(sessionRef(code,`teamClaims/${teamId}/uid`));
+    if(existingUidSnap.exists()&&existingUidSnap.val()!==user.uid)throw new Error('TEAM ALREADY CONNECTED. Minta Teacher memilih Replace Device.');
+    try{
+      await set(sessionRef(code,`teamClaims/${teamId}`),{uid:user.uid,pin:teamPin,claimedAt:serverTimestamp()});
+    }catch{
+      throw new Error('PIN salah atau Team sudah dipakai perangkat lain. Periksa PIN atau minta Teacher memilih Replace Device.');
+    }
     teamName=`Kelompok ${Number(teamId.replace('team',''))}`;
     localStorage.setItem('soc_team_join',JSON.stringify({code,teamId,pin:teamPin}));
     await setupPresence(user.uid);
@@ -62,9 +65,10 @@ function attachSessionListeners(){
 async function attachQuestionData(){
   if(!meta)return;const token=currentKey();
   if(token===questionToken)return;questionToken=token;selected=null;ownAnswer=null;revealData=null;
+  if(answerUnsub){answerUnsub();answerUnsub=null;}if(revealUnsub){revealUnsub();revealUnsub=null;}
   const qSnap=await get(sessionRef(code,`publicQuestions/${token}`));question=qSnap.val();
-  unsubs.push(onValue(sessionRef(code,`answers/${token}/${teamId}`),snap=>{ownAnswer=snap.val();render();}));
-  unsubs.push(onValue(sessionRef(code,`revealPublic/${token}`),snap=>{revealData=snap.val();render();}));
+  answerUnsub=onValue(sessionRef(code,`answers/${token}/${teamId}`),snap=>{ownAnswer=snap.val();render();});
+  revealUnsub=onValue(sessionRef(code,`revealPublic/${token}`),snap=>{revealData=snap.val();render();});
 }
 
 function render(){
@@ -82,7 +86,7 @@ function render(){
     if(ownAnswer?.locked){disableQuestion();showStatus('🔒','ANSWER LOCKED','Jawaban kelompok telah dikunci. Waiting for Teacher...');return;}
     renderQuestion();showStatus('💬','DISCUSS & ANSWER','Pilih jawaban setelah berdiskusi dan mencatat alasan pada LKPD.',true);return;
   }
-  if(meta.questionState==='REVEALED'){disableQuestion();renderQuestion(true);renderResult();return;}
+  if(meta.questionState==='REVEALED'){renderQuestion(true);renderResult();return;}
   disableQuestion();showStatus('⏳','Waiting for Teacher...','Menunggu instruksi berikutnya.');
 }
 
@@ -124,8 +128,8 @@ $('#lockBtn').onclick=async()=>{
   }catch(err){toast(err.message||'Jawaban gagal dikirim.');$('#lockBtn').disabled=false;}
 };
 
-function showStatus(icon,title,text,keepQuestion=false){
-  $('#statusIcon').textContent=icon;$('#statusTitle').textContent=title;$('#statusText').textContent=text;$('#feedbackBox').classList.add('hidden');if(!keepQuestion&&title!=='ANSWER LOCKED'){};
+function showStatus(icon,title,text){
+  $('#statusIcon').textContent=icon;$('#statusTitle').textContent=title;$('#statusText').textContent=text;$('#feedbackBox').classList.add('hidden');
 }
 
 function renderResult(){
@@ -134,4 +138,4 @@ function renderResult(){
   const f=$('#feedbackBox');f.className='feedback '+(ok?'ok':'no');f.innerHTML=`<b>Correct Answer:</b> ${safe(Array.isArray(revealData?.answer)?revealData.answer.join(' • '):revealData?.answer||'—')}<br><br>${safe(revealData?.explanation||'')}`;f.classList.remove('hidden');
 }
 
-const saved=localStorage.getItem('soc_team_join');if(saved){joinFromForm(true);}
+(async()=>{if(typeof auth.authStateReady==='function')await auth.authStateReady();const saved=localStorage.getItem('soc_team_join');if(saved)joinFromForm(true);})();
