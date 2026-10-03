@@ -8,6 +8,7 @@
     },
     "sessions": {
       "$code": {
+        ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'",
         "meta": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid === 'Q1pWDqTBuAcrwmshfWwTCwVFKee2'"
