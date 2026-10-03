@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>SOC Mission Board — Teacher Home</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fffaf0}#site{width:100%;height:100%;border:0;display:block}.loading{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#fffaf0;color:#15527d;font:800 20px/1.4 system-ui,sans-serif}.loading.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="loading" class="loading">Membuka SOC Mission Board Teacher...</div>
+<iframe id="site" title="SOC Mission Board Teacher Home" src="index.html?v=20261003-teacher"></iframe>
+<script type="module">
+import {auth,TEACHER_UID,logout} from './firebase-core.js';
+
+if(typeof auth.authStateReady==='function') await auth.authStateReady();
+if(!auth.currentUser || auth.currentUser.uid!==TEACHER_UID){
+  location.replace('teacher.html');
+}
+
+const frame=document.getElementById('site');
+const loading=document.getElementById('loading');
+
+frame.addEventListener('load',()=>{
+  try{
+    const d=frame.contentDocument;
+    const w=frame.contentWindow;
+    if(!d)return;
+
+    const nav=d.querySelector('#nav');
+    if(nav && !d.querySelector('#teacherMissionControlNav')){
+      const control=d.createElement('button');
+      control.id='teacherMissionControlNav';
+      control.textContent='Teacher Mission Control';
+      control.style.background='#0f5b86';
+      control.style.color='#fff';
+      control.onclick=()=>{window.location.href='teacher-control.html';};
+      nav.appendChild(control);
+
+      const out=d.createElement('button');
+      out.id='teacherLogoutNav';
+      out.textContent='Logout';
+      out.onclick=async()=>{await logout();window.location.replace('teacher.html');};
+      nav.appendChild(out);
+    }
+
+    const actions=d.querySelector('.hero-actions');
+    const start=d.querySelector('#startGameBtn');
+    if(actions && start && !d.querySelector('#studentPhoneModeBtn')){
+      const modeTitle=d.createElement('div');
+      modeTitle.style.cssText='width:100%;font-weight:900;color:#174f78;margin:8px 0 2px;font-size:1.02rem';
+      modeTitle.textContent='Pilih cara menjalankan permainan:';
+      actions.insertBefore(modeTitle,start);
+
+      start.textContent='🖥️ Mode Guru • Input & Lock Jawaban di Laptop';
+      start.title='Guru menjadi operator dan mengunci jawaban setiap kelompok dari laptop.';
+
+      const phone=d.createElement('button');
+      phone.id='studentPhoneModeBtn';
+      phone.className='btn cyan';
+      phone.textContent='📱 Mode HP Siswa • Teacher Mission Control';
+      phone.title='Setiap kelompok menjawab dari HP dan guru mengontrol sesi secara realtime.';
+      phone.onclick=()=>{window.location.href='teacher-control.html';};
+      start.insertAdjacentElement('afterend',phone);
+
+      const note=d.createElement('div');
+      note.style.cssText='width:100%;max-width:820px;margin-top:4px;color:#527994;font-size:.92rem;line-height:1.5';
+      note.innerHTML='<b>Mode Guru:</b> guru memasukkan dan mengunci jawaban kelompok dari satu laptop. &nbsp; <b>Mode HP Siswa:</b> tiap kelompok menjawab dari HP, sedangkan guru mengatur Open Question, Reveal, pembahasan, checkpoint, dan pion.';
+      actions.appendChild(note);
+    }
+
+    loading.classList.add('hidden');
+  }catch(err){
+    console.error(err);
+    loading.textContent='Gagal membuka Teacher Home. Silakan refresh halaman.';
+  }
+});
+</script>
+</body>
+</html>
