@@ -1,2 +1,3 @@
 Deploy marker for SOC Mission Board adventure background music in teacher and team modes.
 Music playback fix v4: TXT-served MP3 base64 + refreshed script cache.
+Confirmed original adventure music v7 activated on teacher and team pages.
