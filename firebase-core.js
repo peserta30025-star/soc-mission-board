@@ -49,18 +49,28 @@ export function teacherConfigRef(path = '') {
   return ref(db, `teacherConfig${path ? '/' + path : ''}`);
 }
 
+function normalizeToken(v) {
+  const raw = String(v ?? '').trim().toUpperCase();
+  if (!raw) return '';
+  const choice = raw.match(/^([A-Z])(?:\s*$|[.):-]\s*|\s+)/);
+  if (choice) return choice[1];
+  return raw.replace(/\s+/g, ' ');
+}
+
 export function normalizeAnswer(v) {
-  if (Array.isArray(v)) return v.map(x => String(x).trim().toUpperCase()).sort();
-  return String(v ?? '').trim().toUpperCase();
+  if (Array.isArray(v)) return v.map(normalizeToken).filter(Boolean).sort();
+  return normalizeToken(v);
 }
 
 export function validateAnswer(given, expected) {
-  if (Array.isArray(expected)) {
-    const a = Array.isArray(given) ? normalizeAnswer(given) : [];
-    const b = normalizeAnswer(expected);
-    return a.length === b.length && a.every((x, i) => x === b[i]);
+  const a = normalizeAnswer(given);
+  const b = normalizeAnswer(expected);
+  if (Array.isArray(a) || Array.isArray(b)) {
+    const aa = Array.isArray(a) ? a : (a === '' ? [] : [a]);
+    const bb = Array.isArray(b) ? b : (b === '' ? [] : [b]);
+    return aa.length === bb.length && aa.every((x, i) => x === bb[i]);
   }
-  return normalizeAnswer(given) === normalizeAnswer(expected);
+  return a === b;
 }
 
 export function currentQuestionKey(meta) {
