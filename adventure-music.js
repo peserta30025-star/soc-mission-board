@@ -1,7 +1,7 @@
 (() => {
   const isTeam = /(^|\/)team\.html(?:$|[?#])/i.test(location.pathname + location.search);
   const role = isTeam ? 'team' : 'teacher';
-  const prefKey = `soc_adventure_music_embedded_v3_${role}`;
+  const prefKey = `soc_adventure_music_confirmed_v7_${role}`;
   let enabled = localStorage.getItem(prefKey) !== '0';
   let started = false;
   let audio = null;
@@ -31,18 +31,26 @@
     btn.textContent = state === 'error' ? '🎵 Ketuk Musik Lagi' : !enabled ? '🔇 Musik: OFF' : started ? '🔊 Musik: ON' : '🎵 Musik: Siap';
   }
 
+  async function loadConfirmedMusic(){
+    const base = 'assets/adventure-music-v7';
+    const files = ['part-00.txt','part-01.txt','part-02.txt','part-03.txt','part-04.txt','part-05.txt'];
+    const parts = await Promise.all(files.map(name =>
+      fetch(`${base}/${name}?v=20261004-confirmed1`, {cache:'no-store'}).then(r => {
+        if(!r.ok) throw new Error(`Audio part ${name}: ${r.status}`);
+        return r.text();
+      })
+    ));
+    const clean = parts.join('').replace(/\s+/g,'');
+    if(clean.length < 50000) throw new Error('Data musik asli tidak lengkap');
+    return clean;
+  }
+
   function loadAudio(){
     if(audio) return Promise.resolve(audio);
     if(audioPromise) return audioPromise;
-    audioPromise = fetch('assets/adventure-loop.txt?v=20261003-music4', {cache:'no-store'})
-      .then(r => {
-        if(!r.ok) throw new Error(`Audio data ${r.status}`);
-        return r.text();
-      })
+    audioPromise = loadConfirmedMusic()
       .then(b64 => {
-        const clean = b64.trim();
-        if(clean.length < 1000) throw new Error('Audio data terlalu pendek');
-        audio = new Audio('data:audio/mpeg;base64,' + clean);
+        audio = new Audio('data:audio/ogg;base64,' + b64);
         audio.loop = true;
         audio.preload = 'auto';
         audio.volume = role === 'team' ? 0.20 : 0.38;
@@ -53,7 +61,7 @@
         return audio;
       })
       .catch(err => {
-        console.warn('SOC music load failed:', err);
+        console.warn('SOC confirmed music load failed:', err);
         audioPromise = null;
         updateButton('error');
         throw err;
