@@ -1,4 +1,4 @@
-import { get, onValue, sessionRef, currentQuestionKey } from './firebase-core.js';
+import { get, onValue, sessionRef, currentQuestionKey } from './firebase-core.js?v=20261004-answerfix1';
 
 const TEAM_NAMES=['Kelompok 1','Kelompok 2','Kelompok 3','Kelompok 4','Kelompok 5','Kelompok 6'];
 let teacherCode='';
@@ -8,7 +8,7 @@ let teacherToken='';
 let teamToken='';
 
 function safe(v=''){
-  return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  return String(v).replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
 }
 
 function injectStyle(){
@@ -29,7 +29,11 @@ function optionText(letter,q){
   if(!raw)return '—';
   if(/^[A-Z]$/i.test(raw)&&Array.isArray(q?.options)){
     const idx=raw.toUpperCase().charCodeAt(0)-65;
-    if(idx>=0&&idx<q.options.length)return `${raw.toUpperCase()}. ${q.options[idx]}`;
+    if(idx>=0&&idx<q.options.length){
+      const option=String(q.options[idx]??'').trim();
+      if(new RegExp('^'+raw.toUpperCase()+'\\s*[.):-]\\s*','i').test(option))return option;
+      return `${raw.toUpperCase()}. ${option}`;
+    }
   }
   return raw;
 }
