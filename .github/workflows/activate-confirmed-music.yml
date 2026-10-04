@@ -1,0 +1,33 @@
+name: Activate confirmed original adventure music
+on:
+  push:
+    paths:
+      - '.github/workflows/activate-confirmed-music.yml'
+permissions:
+  contents: write
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh music script version
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['teacher-home.html','team.html']:
+              p=Path(name)
+              if not p.exists():
+                  continue
+              s=p.read_text()
+              import re
+              s=re.sub(r'adventure-music\.js\?v=[^"\']+', 'adventure-music.js?v=20261004-confirmed1', s)
+              p.write_text(s)
+          PY
+      - name: Commit refresh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add teacher-home.html team.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Use confirmed original adventure music on teacher and team pages'
+          git push
