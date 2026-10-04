@@ -2,3 +2,4 @@ Deploy marker for SOC Mission Board adventure background music in teacher and te
 Music playback fix v4: TXT-served MP3 base64 + refreshed script cache.
 Confirmed original adventure music v7 activated on teacher and team pages.
 Answer validation, reveal feedback, score repair, and checkpoint movement fix v1 deployed.
+Strict checkpoint truth v3: only teams with at least 2/3 correct move; congratulations names are shown.
