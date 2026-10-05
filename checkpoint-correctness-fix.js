@@ -1,4 +1,4 @@
-import { get, update, onValue, sessionRef, validateAnswer } from './firebase-core.js?v=20261004-movementfix3';
+import { get, update, onValue, sessionRef, validateAnswer } from './firebase-core.js';
 
 const TEAM_IDS=['team1','team2','team3','team4','team5','team6'];
 const TEAM_NAMES=['Kelompok 1','Kelompok 2','Kelompok 3','Kelompok 4','Kelompok 5','Kelompok 6'];
@@ -41,6 +41,32 @@ function scoreForTeam(teamId,answers,keys,questions,answerUpdates){
 }
 
 function sameObj(a,b){return JSON.stringify(a||{})===JSON.stringify(b||{});}
+
+function boardPawnPos(progress,i){
+  const positions={
+    0:[[6.2,17.8],[9.2,17.8],[12.2,17.8],[6.2,22.5],[9.2,22.5],[12.2,22.5]],
+    1:[[29.0,18.5],[33.0,18.5],[37.0,18.5],[41.0,18.5],[45.0,18.5],[49.0,18.5]],
+    2:[[64.5,50.8],[68.5,50.8],[72.5,50.8],[76.5,50.8],[80.5,50.8],[84.5,50.8]],
+    3:[[87.0,82.3],[89.7,82.3],[92.4,82.3],[87.0,87.0],[89.7,87.0],[92.4,87.0]]
+  };
+  const p=Math.max(0,Math.min(3,Number(progress||0)));
+  return {x:positions[p][i][0],y:positions[p][i][1]};
+}
+
+function syncBoardPawns(toPositions){
+  const holder=document.getElementById('checkpointPawns');
+  if(!holder||!toPositions)return;
+  TEAM_IDS.forEach((id,i)=>{
+    const pawn=holder.querySelector(`.ct-pawn[data-team="${id}"]`);
+    if(!pawn)return;
+    const target=Math.max(0,Math.min(3,Number(toPositions[id]||0)));
+    const p=boardPawnPos(target,i);
+    pawn.dataset.target=String(target);
+    pawn.style.transition='left .45s ease, top .45s ease';
+    pawn.style.left=p.x+'%';
+    pawn.style.top=p.y+'%';
+  });
+}
 
 function updateCongrats(meta){
   if(!meta||meta.questionState!=='CHECKPOINT')return;
@@ -105,15 +131,15 @@ async function calculateCheckpoint(code,metaOverride=null){
   if(!sameObj(meta.checkpointToPositions,to))updates['meta/checkpointToPositions']=to;
   if(meta.questionState!=='CHECKPOINT')updates['meta/questionState']='CHECKPOINT';
 
+  const mergedMeta={...meta,checkpointMoves:moves,checkpointCorrectCounts:counts,checkpointFromPositions:from,checkpointToPositions:to,questionState:'CHECKPOINT'};
   if(Object.keys(updates).length){
     await update(sessionRef(code),updates);
-    const mergedMeta={...meta,checkpointMoves:moves,checkpointCorrectCounts:counts,checkpointFromPositions:from,checkpointToPositions:to,questionState:'CHECKPOINT'};
-    lastMeta=mergedMeta;
-    setTimeout(()=>updateCongrats(mergedMeta),60);
-  }else{
-    lastMeta=meta;
-    updateCongrats(meta);
   }
+  lastMeta=mergedMeta;
+  setTimeout(()=>{
+    updateCongrats(mergedMeta);
+    syncBoardPawns(to);
+  },100);
 }
 
 async function repairCheckpoint(code,meta){
@@ -145,8 +171,8 @@ async function nextWithCorrectMovement(e){
 
 function bindNext(){
   const btn=document.getElementById('nextBtn');
-  if(!btn||btn.dataset.correctMovementFix==='3')return;
-  btn.dataset.correctMovementFix='3';
+  if(!btn||btn.dataset.correctMovementFix==='4')return;
+  btn.dataset.correctMovementFix='4';
   btn.addEventListener('click',nextWithCorrectMovement,true);
 }
 
@@ -165,5 +191,8 @@ setInterval(()=>{
   bindNext();
   const code=currentCode();
   if(code)attach(code);
-  if(lastMeta?.questionState==='CHECKPOINT')updateCongrats(lastMeta);
+  if(lastMeta?.questionState==='CHECKPOINT'){
+    updateCongrats(lastMeta);
+    syncBoardPawns(lastMeta.checkpointToPositions||{});
+  }
 },300);
