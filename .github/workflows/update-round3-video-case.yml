@@ -1,0 +1,225 @@
+name: Update Round 3 video case
+on:
+  push:
+    paths:
+      - '.github/workflows/update-round3-video-case.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Round 3 video and questions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          DRIVE_PREVIEW='https://drive.google.com/file/d/1CaxrhuVf8C_qMxjxAAIwzJdO3mTu8Hey/preview'
+          VER='round3_berita_nyata_v1'
+
+          round3_app = """    {
+      name:'DIGITAL RESPONSIBILITY',
+      focus:'Literasi digital, hoaks, dan tanggung jawab bermedia • Respect • Educate • Protect',
+      difficulty:'🟣 LEVEL 3 • ANALYZE, EVALUATE & DECIDE',
+      videoCase:true,
+      questions:[
+        {
+          name:'VERIFY THE CLAIM', type:'multiple-response', score:20,
+          instruction:'Tonton video “Berita Nyata” pada layar guru. Pilih semua jawaban yang tepat berdasarkan kasus dalam video.',
+          question:'Dalam video, seorang pengguna menerima video kekerasan lalu ikut menyebarkan tuduhan sebelum memastikan kebenarannya. Tindakan mana yang dapat memperbesar penyebaran hoaks? Pilih semua jawaban yang tepat.',
+          options:['A. Langsung menyimpulkan siapa pelaku tanpa memeriksa sumber dan konteks video','B. Mengunggah ulang video dengan judul atau tuduhan yang provokatif','C. Memeriksa sumber asli, konteks, dan informasi dari sumber tepercaya terlebih dahulu','D. Membagikan video karena sedang ramai dan memancing emosi','E. Menahan diri untuk tidak membagikan sampai informasi terverifikasi'],
+          answer:['A','B','D'],
+          explanation:'Hoaks mudah menyebar ketika orang terburu-buru menyimpulkan, menambahkan tuduhan, dan membagikan konten karena emosi. Sikap yang bertanggung jawab adalah berhenti sejenak, memeriksa sumber, konteks, dan kebenaran informasi sebelum membagikannya.'
+        },
+        {
+          name:'MATCH THE DIGITAL PRINCIPLE', type:'matching', score:20,
+          question:'Cocokkan tindakan yang tepat setelah menerima video viral dengan prinsip Respect, Educate, dan Protect.',
+          options:['1. Tidak menghina atau menuduh seseorang sebelum fakta terbukti','2. Memeriksa sumber asli, konteks video, dan membandingkan informasi dengan sumber tepercaya','3. Tidak ikut menyebarkan konten menyesatkan serta melaporkan konten jika berpotensi merugikan orang lain'],
+          matchOptions:['A. Respect','B. Educate','C. Protect'],
+          answer:['A','B','C'],
+          explanation:'Respect berarti menghargai martabat dan nama baik orang lain. Educate berarti bersikap kritis, memeriksa sumber dan konteks. Protect berarti mencegah penyebaran konten yang merugikan serta menjaga diri dan orang lain dari dampak informasi palsu.'
+        },
+        {
+          name:'VERIFY BEFORE SHARE', type:'case-study', score:20,
+          instruction:'Pilih keputusan yang paling bertanggung jawab.',
+          question:'Jika video kekerasan serupa masuk ke grup kelas dengan caption “pelakunya harus dipenjara”, tetapi sumber dan konteks videonya belum jelas, tindakan paling tepat adalah ...',
+          options:['A. Langsung meneruskan agar teman-teman cepat tahu','B. Menahan penyebaran, mencari sumber asli dan konteks video, membandingkan dengan sumber tepercaya, lalu hanya membagikan informasi jika sudah terverifikasi','C. Menambahkan judul yang lebih menarik agar banyak orang memperhatikan','D. Menyimpan video dan membagikannya hanya kepada teman dekat'],
+          answer:'B',
+          explanation:'Informasi viral belum tentu benar. Langkah yang bertanggung jawab adalah menghentikan penyebaran sementara, melakukan verifikasi, dan tidak menambah tuduhan yang belum terbukti. Jejak digital dan penyebaran hoaks dapat merugikan orang lain.'
+        }
+      ]
+    }"""
+
+          round3_bank = """  {
+    round: 3,
+    roundName: 'DIGITAL RESPONSIBILITY',
+    focus: 'Literasi digital, hoaks, dan tanggung jawab bermedia • Respect • Educate • Protect',
+    level: 'ANALYZE • EVALUATE • DECIDE',
+    videoCase: true,
+    questions: [
+      {
+        id: 'r3q1',
+        name: 'VERIFY THE CLAIM',
+        type: 'multiple-response',
+        score: 20,
+        instruction: 'Tonton video “Berita Nyata” pada layar guru. Pilih semua jawaban yang tepat berdasarkan kasus dalam video.',
+        question: 'Dalam video, seorang pengguna menerima video kekerasan lalu ikut menyebarkan tuduhan sebelum memastikan kebenarannya. Tindakan mana yang dapat memperbesar penyebaran hoaks? Pilih semua jawaban yang tepat.',
+        options: [
+          'A. Langsung menyimpulkan siapa pelaku tanpa memeriksa sumber dan konteks video',
+          'B. Mengunggah ulang video dengan judul atau tuduhan yang provokatif',
+          'C. Memeriksa sumber asli, konteks, dan informasi dari sumber tepercaya terlebih dahulu',
+          'D. Membagikan video karena sedang ramai dan memancing emosi',
+          'E. Menahan diri untuk tidak membagikan sampai informasi terverifikasi'
+        ],
+        explanation: 'Hoaks mudah menyebar ketika orang terburu-buru menyimpulkan, menambahkan tuduhan, dan membagikan konten karena emosi. Sikap yang bertanggung jawab adalah berhenti sejenak, memeriksa sumber, konteks, dan kebenaran informasi sebelum membagikannya.'
+      },
+      {
+        id: 'r3q2',
+        name: 'MATCH THE DIGITAL PRINCIPLE',
+        type: 'matching',
+        score: 20,
+        question: 'Cocokkan tindakan yang tepat setelah menerima video viral dengan prinsip Respect, Educate, dan Protect.',
+        options: [
+          '1. Tidak menghina atau menuduh seseorang sebelum fakta terbukti',
+          '2. Memeriksa sumber asli, konteks video, dan membandingkan informasi dengan sumber tepercaya',
+          '3. Tidak ikut menyebarkan konten menyesatkan serta melaporkan konten jika berpotensi merugikan orang lain'
+        ],
+        matchOptions: ['A. Respect','B. Educate','C. Protect'],
+        explanation: 'Respect berarti menghargai martabat dan nama baik orang lain. Educate berarti bersikap kritis, memeriksa sumber dan konteks. Protect berarti mencegah penyebaran konten yang merugikan serta menjaga diri dan orang lain dari dampak informasi palsu.'
+      },
+      {
+        id: 'r3q3',
+        name: 'VERIFY BEFORE SHARE',
+        type: 'case-study',
+        score: 20,
+        instruction: 'Pilih keputusan yang paling bertanggung jawab.',
+        question: 'Jika video kekerasan serupa masuk ke grup kelas dengan caption “pelakunya harus dipenjara”, tetapi sumber dan konteks videonya belum jelas, tindakan paling tepat adalah ...',
+        options: [
+          'A. Langsung meneruskan agar teman-teman cepat tahu',
+          'B. Menahan penyebaran, mencari sumber asli dan konteks video, membandingkan dengan sumber tepercaya, lalu hanya membagikan informasi jika sudah terverifikasi',
+          'C. Menambahkan judul yang lebih menarik agar banyak orang memperhatikan',
+          'D. Menyimpan video dan membagikannya hanya kepada teman dekat'
+        ],
+        explanation: 'Informasi viral belum tentu benar. Langkah yang bertanggung jawab adalah menghentikan penyebaran sementara, melakukan verifikasi, dan tidak menambah tuduhan yang belum terbukti. Jejak digital dan penyebaran hoaks dapat merugikan orang lain.'
+      }
+    ]
+  }"""
+
+          # app1.js: defaults + one-time content version marker
+          p=Path('app1.js'); s=p.read_text()
+          s=s.replace("videoSrc:'assets/video/digital-case.mp4'", f"videoSrc:'{DRIVE_PREVIEW}'")
+          if "contentVersion:'round3_berita_nyata_v1'" not in s:
+              s=s.replace("videoPoster:'hero-visual.webp',", "videoPoster:'assets/video/digital-case-poster.svg',\n  contentVersion:'round3_berita_nyata_v1',", 1)
+          pat=re.compile(r"    \{\n      name:'DIGITAL RESPONSIBILITY',.*?\n    \}\n  \]\n\};", re.S)
+          s,n=pat.subn(round3_app+"\n  ]\n};",s,count=1)
+          if n!=1: raise SystemExit('Round 3 DEFAULT_CONFIG block not found in app1.js')
+          p.write_text(s)
+
+          # multiplayer fallback question bank
+          p=Path('multiplayer-question-bank.js'); s=p.read_text()
+          pat=re.compile(r"  \{\n    round: 3,.*?\n  \}\n\];", re.S)
+          s,n=pat.subn(round3_bank+"\n];",s,count=1)
+          if n!=1: raise SystemExit('Round 3 bank block not found')
+          p.write_text(s)
+
+          # manual mode video renderer
+          p=Path('app2.js'); s=p.read_text()
+          new_render=r'''function renderVideoCase(round,q){
+  const wrap=$('#videoCaseWrap'); if(!wrap)return;
+  if(!round.videoCase){wrap.innerHTML='';wrap.style.display='none';return;}
+  wrap.style.display='block';
+  const src=config.videoSrc||'assets/video/digital-case.mp4';
+  const driveMatch=String(src).match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  const media=driveMatch
+    ? `<div class="video-shell"><iframe title="Video kasus Berita Nyata" src="https://drive.google.com/file/d/${driveMatch[1]}/preview" allow="autoplay; fullscreen" allowfullscreen style="width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#111"></iframe></div>`
+    : `<div class="video-shell"><video id="caseVideo" controls preload="metadata" poster="${esc(config.videoPoster||'assets/video/digital-case-poster.svg')}"><source src="${esc(src)}" type="video/mp4">Browser ini belum dapat memutar video.</video><div class="video-fallback" id="videoFallback">Jika video belum tersedia, gunakan ringkasan kasus di bawah.</div></div>`;
+  if(q===0){
+    wrap.innerHTML=`<div class="video-case card"><div class="eyebrow">WATCH THE CASE</div><h3>“Berita Nyata” — Video Viral dan Hoaks</h3><p class="muted">Tonton sampai selesai. Perhatikan bagaimana sebuah video diterima, diberi kesimpulan atau tuduhan, lalu disebarkan. Catat pada LKPD: informasi apa yang seharusnya diverifikasi sebelum membagikan konten?</p>${media}<details class="case-transcript"><summary>Ringkasan kasus cadangan</summary><p>Seorang pengguna menerima video kekerasan, lalu terburu-buru mempercayai narasi yang menyertainya dan mengunggah kembali video dengan tuduhan terhadap seseorang. Konten tersebut menyebar luas. Belakangan, tuduhan itu dinyatakan sebagai hoaks atau fitnah dan penyebarannya menimbulkan konsekuensi. Inti kasus: jangan langsung percaya atau menyebarkan konten sebelum memeriksa sumber, konteks, dan kebenarannya.</p></details></div>`;
+    const v=$('#caseVideo'); if(v)v.addEventListener('error',()=>$('#videoFallback')?.classList.add('show'));
+  } else {
+    wrap.innerHTML=`<div class="notice">🎬 <b>Gunakan kembali kasus video “Berita Nyata”.</b> Hubungkan jawaban kalian dengan verifikasi informasi, dampak hoaks, serta prinsip Respect–Educate–Protect.</div>`;
+  }
+}
+
+function questionProgressHTML'''
+          pat=re.compile(r"function renderVideoCase\(round,q\)\{.*?\n\}\n\nfunction questionProgressHTML",re.S)
+          s,n=pat.subn(new_render,s,count=1)
+          if n!=1: raise SystemExit('renderVideoCase block not found')
+          p.write_text(s)
+
+          # teacher control: show the uploaded video through Drive preview on the projected teacher screen
+          p=Path('teacher-control.html'); s=p.read_text()
+          old_pat=re.compile(r'        <div id="videoCase" class="video-case hidden">.*?        </div>\n\n        <div id="teacherQuestion"',re.S)
+          new_block=f'''        <div id="videoCase" class="video-case hidden">
+          <div class="eyebrow">WATCH THE CASE</div><h3>“Berita Nyata” — Video Viral dan Hoaks</h3>
+          <p class="mini">Tonton bersama melalui layar guru. Perhatikan sumber, konteks, tuduhan, dan dampak ketika informasi belum terverifikasi ikut disebarkan.</p>
+          <iframe title="Video kasus Berita Nyata" src="{DRIVE_PREVIEW}" allow="autoplay; fullscreen" allowfullscreen style="display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#111"></iframe>
+          <div id="videoFallback" class="fallback hidden"><b>VIDEO TIDAK DAPAT DIPUTAR</b><br>Gunakan ringkasan kasus pada layar/LKPD sebagai stimulus analisis.</div>
+        </div>
+
+        <div id="teacherQuestion"'''
+          s,n=old_pat.subn(new_block,s,count=1)
+          if n!=1: raise SystemExit('teacher-control video block not found')
+          s=re.sub(r'teacher-app\.js\?v=[^"\']+', 'teacher-app.js?v=20261005-round3video1', s)
+          p.write_text(s)
+
+          # teacher app: bust imported fallback bank cache
+          p=Path('teacher-app.js'); s=p.read_text()
+          s=re.sub(r"from './multiplayer-question-bank\.js(?:\?[^']*)?';", "from './multiplayer-question-bank.js?v=20261005-round3video1';", s, count=1)
+          p.write_text(s)
+
+          # shared-config-sync: one-time migration so existing Teacher Setup + Firebase get the new Round 3 without changing other rounds/settings
+          p=Path('shared-config-sync.js')
+          p.write_text(r'''import { auth, TEACHER_UID, teacherConfigRef, get, update } from './firebase-core.js';
+
+const STORAGE_KEY = 'mb_config_v4_digital_society';
+const RELOAD_GUARD = 'soc_shared_config_reloaded';
+const CONTENT_VERSION = 'round3_berita_nyata_v1';
+const VIDEO_SRC = 'https://drive.google.com/file/d/1CaxrhuVf8C_qMxjxAAIwzJdO3mTu8Hey/preview';
+const ROUND3 = {
+  name:'DIGITAL RESPONSIBILITY',
+  focus:'Literasi digital, hoaks, dan tanggung jawab bermedia • Respect • Educate • Protect',
+  difficulty:'🟣 LEVEL 3 • ANALYZE, EVALUATE & DECIDE',
+  videoCase:true,
+  questions:[
+    {name:'VERIFY THE CLAIM',type:'multiple-response',score:20,instruction:'Tonton video “Berita Nyata” pada layar guru. Pilih semua jawaban yang tepat berdasarkan kasus dalam video.',question:'Dalam video, seorang pengguna menerima video kekerasan lalu ikut menyebarkan tuduhan sebelum memastikan kebenarannya. Tindakan mana yang dapat memperbesar penyebaran hoaks? Pilih semua jawaban yang tepat.',options:['A. Langsung menyimpulkan siapa pelaku tanpa memeriksa sumber dan konteks video','B. Mengunggah ulang video dengan judul atau tuduhan yang provokatif','C. Memeriksa sumber asli, konteks, dan informasi dari sumber tepercaya terlebih dahulu','D. Membagikan video karena sedang ramai dan memancing emosi','E. Menahan diri untuk tidak membagikan sampai informasi terverifikasi'],answer:['A','B','D'],explanation:'Hoaks mudah menyebar ketika orang terburu-buru menyimpulkan, menambahkan tuduhan, dan membagikan konten karena emosi. Sikap yang bertanggung jawab adalah berhenti sejenak, memeriksa sumber, konteks, dan kebenaran informasi sebelum membagikannya.'},
+    {name:'MATCH THE DIGITAL PRINCIPLE',type:'matching',score:20,question:'Cocokkan tindakan yang tepat setelah menerima video viral dengan prinsip Respect, Educate, dan Protect.',options:['1. Tidak menghina atau menuduh seseorang sebelum fakta terbukti','2. Memeriksa sumber asli, konteks video, dan membandingkan informasi dengan sumber tepercaya','3. Tidak ikut menyebarkan konten menyesatkan serta melaporkan konten jika berpotensi merugikan orang lain'],matchOptions:['A. Respect','B. Educate','C. Protect'],answer:['A','B','C'],explanation:'Respect berarti menghargai martabat dan nama baik orang lain. Educate berarti bersikap kritis, memeriksa sumber dan konteks. Protect berarti mencegah penyebaran konten yang merugikan serta menjaga diri dan orang lain dari dampak informasi palsu.'},
+    {name:'VERIFY BEFORE SHARE',type:'case-study',score:20,instruction:'Pilih keputusan yang paling bertanggung jawab.',question:'Jika video kekerasan serupa masuk ke grup kelas dengan caption “pelakunya harus dipenjara”, tetapi sumber dan konteks videonya belum jelas, tindakan paling tepat adalah ...',options:['A. Langsung meneruskan agar teman-teman cepat tahu','B. Menahan penyebaran, mencari sumber asli dan konteks video, membandingkan dengan sumber tepercaya, lalu hanya membagikan informasi jika sudah terverifikasi','C. Menambahkan judul yang lebih menarik agar banyak orang memperhatikan','D. Menyimpan video dan membagikannya hanya kepada teman dekat'],answer:'B',explanation:'Informasi viral belum tentu benar. Langkah yang bertanggung jawab adalah menghentikan penyebaran sementara, melakukan verifikasi, dan tidak menambah tuduhan yang belum terbukti. Jejak digital dan penyebaran hoaks dapat merugikan orang lain.'}
+  ]
+};
+function readLocalConfig(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');}catch{return null;}}
+function normalizeRounds(rounds){if(Array.isArray(rounds))return rounds;if(rounds&&typeof rounds==='object')return Object.keys(rounds).sort().map(k=>rounds[k]);return [];}
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function migrate(cfg){if(!cfg)return {cfg,changed:false};const already=cfg.contentVersion===CONTENT_VERSION&&normalizeRounds(cfg.rounds)?.[2]?.questions?.[0]?.name==='VERIFY THE CLAIM';if(already)return {cfg,changed:false};const next=clone(cfg);const rounds=normalizeRounds(next.rounds);while(rounds.length<3)rounds.push({name:'',focus:'',difficulty:'',questions:[]});rounds[2]=clone(ROUND3);next.rounds=rounds;next.videoSrc=VIDEO_SRC;next.videoPoster='assets/video/digital-case-poster.svg';next.contentVersion=CONTENT_VERSION;return {cfg:next,changed:true};}
+function buildAnswerKeys(cfg){const out={};normalizeRounds(cfg?.rounds).slice(0,3).forEach((round,ri)=>{const qs=Array.isArray(round?.questions)?round.questions:Object.values(round?.questions||{});qs.slice(0,3).forEach((q,qi)=>{if(q&&q.answer!==undefined&&q.answer!==null&&q.answer!=='')out[`r${ri+1}q${qi+1}`]=q.answer;});});return out;}
+async function pushSharedConfig(cfg){if(!cfg||auth.currentUser?.uid!==TEACHER_UID)return;await update(teacherConfigRef(),{gameConfig:cfg,answerKeys:buildAnswerKeys(cfg),gameConfigUpdatedAt:Date.now()});}
+function updateSetupLabels(){const setup=document.querySelector('#page-setup');if(!setup)return;const headP=setup.querySelector('.section-head p');if(headP)headP.textContent='Satu Teacher Setup untuk Mode Guru dan Mode HP Siswa. Perubahan soal berlaku pada permainan/sesi baru.';const saveCard=document.querySelector('#saveConfigBtn')?.closest('.card');const note=saveCard?.querySelector('.muted.mini');if(note)note.textContent='Disimpan ke akun guru dan otomatis dipakai oleh Mode Guru + Mode HP Siswa.';let status=document.querySelector('#sharedConfigStatus');if(!status&&saveCard){status=document.createElement('div');status.id='sharedConfigStatus';status.className='mini muted';status.style.marginTop='6px';saveCard.querySelector('div')?.appendChild(status);}}
+function showStatus(text,good=true){updateSetupLabels();const el=document.querySelector('#sharedConfigStatus');if(el){el.textContent=text;el.style.color=good?'#27875f':'#b74b4b';el.style.fontWeight='800';}}
+async function syncFromFirebase(){if(typeof auth.authStateReady==='function')await auth.authStateReady();if(auth.currentUser?.uid!==TEACHER_UID)return;updateSetupLabels();const snap=await get(teacherConfigRef('gameConfig'));if(!snap.exists()){const m=migrate(readLocalConfig());if(m.cfg){localStorage.setItem(STORAGE_KEY,JSON.stringify(m.cfg));await pushSharedConfig(m.cfg);showStatus('✓ Round 3 video “Berita Nyata” dan soal terkait sudah tersinkron ke kedua mode.');}else showStatus('Teacher Setup siap. Simpan sekali agar dipakai kedua mode.',true);return;}const m=migrate(snap.val());const remote=m.cfg;if(m.changed)await pushSharedConfig(remote);const remoteText=JSON.stringify(remote);const localText=localStorage.getItem(STORAGE_KEY)||'';if(remoteText!==localText){localStorage.setItem(STORAGE_KEY,remoteText);if(sessionStorage.getItem(RELOAD_GUARD)!==remoteText){sessionStorage.setItem(RELOAD_GUARD,remoteText);location.reload();return;}}sessionStorage.removeItem(RELOAD_GUARD);showStatus(m.changed?'✓ Round 3 diperbarui: video “Berita Nyata” + 3 soal baru tersinkron.':'✓ Teacher Setup terhubung ke Mode Guru + Mode HP Siswa.');}
+function bindSaveButtons(){updateSetupLabels();const saveBtn=document.querySelector('#saveConfigBtn');if(saveBtn&&!saveBtn.dataset.sharedSyncBound){saveBtn.dataset.sharedSyncBound='1';saveBtn.addEventListener('click',()=>setTimeout(async()=>{try{const cfg=readLocalConfig();if(!cfg)throw new Error('Konfigurasi lokal belum tersedia.');await pushSharedConfig(cfg);showStatus('✓ Tersimpan. Soal ini sekarang menjadi sumber untuk Mode Guru dan Mode HP.');}catch(e){showStatus('Sinkronisasi Firebase gagal: '+(e?.message||e),false);}},0));}const resetBtn=document.querySelector('#resetConfigBtn');if(resetBtn&&!resetBtn.dataset.sharedSyncBound){resetBtn.dataset.sharedSyncBound='1';resetBtn.addEventListener('click',()=>setTimeout(async()=>{try{const cfg=readLocalConfig();if(cfg)await pushSharedConfig(cfg);showStatus('✓ Konfigurasi default disinkronkan ke kedua mode.');}catch(e){showStatus('Sinkronisasi Firebase gagal: '+(e?.message||e),false);}},0));}}
+bindSaveButtons();syncFromFirebase().catch(e=>showStatus('Sinkronisasi belum tersedia: '+(e?.message||e),false));
+''')
+
+          # cache-bust main page scripts and shared sync
+          p=Path('index.html'); s=p.read_text()
+          s=re.sub(r'<script src="app1\.js(?:\?[^\"]*)?"></script>', '<script src="app1.js?v=20261005-round3video1"></script>', s)
+          s=re.sub(r'<script src="app2\.js(?:\?[^\"]*)?"></script>', '<script src="app2.js?v=20261005-round3video1"></script>', s)
+          s=re.sub(r'<script type="module" src="shared-config-sync\.js(?:\?[^\"]*)?"></script>', '<script type="module" src="shared-config-sync.js?v=20261005-round3video1"></script>', s)
+          p.write_text(s)
+
+          # outer Teacher Home loads the refreshed workspace and Mission Control
+          p=Path('teacher-home.html'); s=p.read_text()
+          s=re.sub(r"index\.html\?v=[^']+", 'index.html?v=20261005-round3video1', s)
+          s=re.sub(r'teacher-control\.html\?v=[^"\']+', 'teacher-control.html?v=20261005-round3video1', s)
+          p.write_text(s)
+          PY
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app1.js app2.js multiplayer-question-bank.js teacher-control.html teacher-app.js shared-config-sync.js index.html teacher-home.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Align Round 3 with Berita Nyata video case"
+          git push
