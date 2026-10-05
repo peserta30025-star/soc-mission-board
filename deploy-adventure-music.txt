@@ -5,3 +5,4 @@ Answer validation, reveal feedback, score repair, and checkpoint movement fix v1
 Strict checkpoint truth v3: only teams with at least 2/3 correct move; congratulations names are shown.
 Authoritative checkpoint movement v4: shared Firebase module, exact 2/3 movement rule, and pawn visual correction for teacher and team modes.
 Authoritative checkpoint movement v5: Teacher app is the single movement source, conflicting Next handlers removed, shared Firebase module unified, and congratulations text synchronized.
+Manual Mode fix v1: original teacher-input board now moves only teams with at least 2/3 correct, repairs old local progress, and shows congratulation names.
