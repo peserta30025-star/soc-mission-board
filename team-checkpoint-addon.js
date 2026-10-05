@@ -1,4 +1,4 @@
-import { onValue, sessionRef } from './firebase-core.js?v=20261004-teamcheckpoint1';
+import { onValue, sessionRef } from './firebase-core.js';
 
 let code='';
 let teamId='';
