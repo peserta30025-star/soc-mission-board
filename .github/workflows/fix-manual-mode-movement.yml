@@ -16,88 +16,80 @@ jobs:
           from pathlib import Path
           import re
 
-          p=Path('app2.js')
-          s=p.read_text()
+          p = Path('app2.js')
+          s = p.read_text()
 
           if 'function manualRoundCorrectCount(' not in s:
-              marker='function renderBoard(){\n'
-              helper="""function manualRoundCorrectCount(t,r){
-  const qs=new Set();
-  (t.answers||[]).forEach(a=>{if(Number(a.round)===r&&a.correct===true)qs.add(Number(a.question));});
-  return qs.size;
-}
-function repairManualProgress(){
-  let changed=false;
-  run.teams.forEach(t=>{
-    let exact=0;
-    for(let rr=0;rr<3;rr++){
-      if(t.roundCompleted?.[rr]&&manualRoundCorrectCount(t,rr)>=2)exact++;
-    }
-    if(Number(t.progress||0)!==exact){t.progress=exact;changed=true;}
-  });
-  if(changed)saveRun();
-}
-
-"""
+              helper = "\n".join([
+                  "function manualRoundCorrectCount(t,r){",
+                  "  const qs=new Set();",
+                  "  (t.answers||[]).forEach(a=>{if(Number(a.round)===r&&a.correct===true)qs.add(Number(a.question));});",
+                  "  return qs.size;",
+                  "}",
+                  "function repairManualProgress(){",
+                  "  let changed=false;",
+                  "  run.teams.forEach(t=>{",
+                  "    let exact=0;",
+                  "    for(let rr=0;rr<3;rr++){",
+                  "      if(t.roundCompleted?.[rr]&&manualRoundCorrectCount(t,rr)>=2)exact++;",
+                  "    }",
+                  "    if(Number(t.progress||0)!==exact){t.progress=exact;changed=true;}",
+                  "  });",
+                  "  if(changed)saveRun();",
+                  "}",
+                  ""
+              ]) + "\n"
+              marker = 'function renderBoard(){\n'
               if marker not in s:
                   raise SystemExit('renderBoard marker not found')
-              s=s.replace(marker,helper+marker,1)
+              s = s.replace(marker, helper + marker, 1)
 
-          s=s.replace("function renderBoard(){\n  $('#boardGameTitle').textContent=config.gameName;",
-                      "function renderBoard(){\n  repairManualProgress();\n  $('#boardGameTitle').textContent=config.gameName;",1)
+          s = s.replace("function renderBoard(){\n  $('#boardGameTitle').textContent=config.gameName;", "function renderBoard(){\n  repairManualProgress();\n  $('#boardGameTitle').textContent=config.gameName;", 1)
 
-          old="""function completeRound(){
-  const r=run.roundIndex; const from=run.teams.map(t=>t.progress);
-  run.teams.forEach(t=>{t.roundCompleted[r]=true;t.progress=Math.max(t.progress,r+1);}); const to=run.teams.map(t=>t.progress); moveAnimation={from,to};
-  const completedRound=r+1; run.questionIndex=0; run.roundIndex++;
-  if(run.roundIndex>=3){run.gameComplete=true;run.roundIndex=2;run.questionIndex=2;}
-  resetQuestionState(); saveRun(); go('board');
-  $('#celebrateTitle').textContent=`🎉 ROUND ${completedRound} COMPLETE`;
-  $('#celebrateText').textContent=completedRound===1?'🚩 CHECKPOINT 1 REACHED!':completedRound===2?'🚩 CHECKPOINT 2 REACHED!':'🏆 FINISH REACHED! Lanjut ke Final Mission.';
-  setTimeout(()=>$('#celebration').classList.add('show'),350);
-}"""
-          new="""function completeRound(){
-  const r=run.roundIndex; const from=run.teams.map(t=>t.progress);
-  const qualified=[]; const stayed=[];
-  run.teams.forEach(t=>{
-    t.roundCompleted[r]=true;
-    const correct=manualRoundCorrectCount(t,r);
-    if(correct>=2){
-      t.progress=Math.min(3,Number(t.progress||0)+1);
-      qualified.push(`${t.name} (${correct}/3)`);
-    }else{
-      stayed.push(`${t.name} (${correct}/3)`);
-    }
-  });
-  const to=run.teams.map(t=>t.progress); moveAnimation={from,to};
-  const completedRound=r+1; run.questionIndex=0; run.roundIndex++;
-  if(run.roundIndex>=3){run.gameComplete=true;run.roundIndex=2;run.questionIndex=2;}
-  resetQuestionState(); saveRun(); go('board');
-  if(qualified.length){
-    $('#celebrateTitle').textContent=`🎉 SELAMAT ${qualified.map(x=>x.replace(/ \\([0-3]\\/3\\)$/,'')).join(', ')}!`;
-    $('#celebrateText').textContent=`Pion berhasil maju 1 checkpoint karena benar minimal 2 dari 3 soal: ${qualified.join(', ')}.${stayed.length?` Kelompok yang tetap di posisi sebelumnya: ${stayed.join(', ')}.`:''}`;
-  }else{
-    $('#celebrateTitle').textContent=`ROUND ${completedRound} SELESAI`;
-    $('#celebrateText').textContent=`Belum ada kelompok yang mencapai minimal 2 dari 3 jawaban benar. Semua pion tetap di posisi sebelumnya; poin tetap tersimpan.`;
-  }
-  setTimeout(()=>$('#celebration').classList.add('show'),350);
-}"""
-          if old in s:
-              s=s.replace(old,new,1)
-          elif 'const qualified=[]; const stayed=[];' not in s:
-              raise SystemExit('old completeRound block not found')
-
+          start = s.index('function completeRound(){')
+          end = s.index("\n$('#closeCelebrate').onclick", start)
+          new_block = "\n".join([
+              "function completeRound(){",
+              "  const r=run.roundIndex; const from=run.teams.map(t=>t.progress);",
+              "  const qualified=[]; const stayed=[];",
+              "  run.teams.forEach(t=>{",
+              "    t.roundCompleted[r]=true;",
+              "    const correct=manualRoundCorrectCount(t,r);",
+              "    if(correct>=2){",
+              "      t.progress=Math.min(3,Number(t.progress||0)+1);",
+              "      qualified.push({name:t.name,correct});",
+              "    }else{",
+              "      stayed.push({name:t.name,correct});",
+              "    }",
+              "  });",
+              "  const to=run.teams.map(t=>t.progress); moveAnimation={from,to};",
+              "  const completedRound=r+1; run.questionIndex=0; run.roundIndex++;",
+              "  if(run.roundIndex>=3){run.gameComplete=true;run.roundIndex=2;run.questionIndex=2;}",
+              "  resetQuestionState(); saveRun(); go('board');",
+              "  const passedNames=qualified.map(x=>x.name);",
+              "  const stayedNames=stayed.map(x=>x.name);",
+              "  if(passedNames.length){",
+              "    $('#celebrateTitle').textContent=`🎉 SELAMAT ${passedNames.join(', ')}!`;",
+              "    $('#celebrateText').textContent=`Pion berhasil maju 1 checkpoint karena benar minimal 2 dari 3 soal: ${qualified.map(x=>`${x.name} (${x.correct}/3)`).join(', ')}.${stayedNames.length?` Kelompok yang tetap di posisi sebelumnya: ${stayed.map(x=>`${x.name} (${x.correct}/3)`).join(', ')}.`:''}`;",
+              "  }else{",
+              "    $('#celebrateTitle').textContent=`ROUND ${completedRound} SELESAI`;",
+              "    $('#celebrateText').textContent='Belum ada kelompok yang mencapai minimal 2 dari 3 jawaban benar. Semua pion tetap di posisi sebelumnya; poin tetap tersimpan.';",
+              "  }",
+              "  setTimeout(()=>$('#celebration').classList.add('show'),350);",
+              "}"
+          ])
+          s = s[:start] + new_block + s[end:]
           p.write_text(s)
 
-          p=Path('index.html')
-          s=p.read_text()
-          s=re.sub(r'<script src="app2\.js(?:\?[^\"]*)?"></script>', '<script src="app2.js?v=20261005-manualmove1"></script>', s)
-          s=s.replace('Pion bergerak setelah satu round selesai: Round 1 → Checkpoint 1, Round 2 → Checkpoint 2, Round 3 → Finish.', 'Pion bergerak 1 checkpoint hanya jika kelompok benar minimal 2 dari 3 soal pada round tersebut. Poin tetap tersimpan meskipun pion tidak bergerak.')
+          p = Path('index.html')
+          s = p.read_text()
+          s = re.sub(r'<script src="app2\.js(?:\?[^\"]*)?"></script>', '<script src="app2.js?v=20261005-manualmove1"></script>', s)
+          s = s.replace('Pion bergerak setelah satu round selesai: Round 1 → Checkpoint 1, Round 2 → Checkpoint 2, Round 3 → Finish.', 'Pion bergerak 1 checkpoint hanya jika kelompok benar minimal 2 dari 3 soal pada round tersebut. Poin tetap tersimpan meskipun pion tidak bergerak.')
           p.write_text(s)
 
-          p=Path('teacher-home.html')
-          s=p.read_text()
-          s=s.replace("frame.src='index.html?v=20261003-integrated2'", "frame.src='index.html?v=20261005-manualmove1'")
+          p = Path('teacher-home.html')
+          s = p.read_text()
+          s = s.replace("frame.src='index.html?v=20261003-integrated2'", "frame.src='index.html?v=20261005-manualmove1'")
           p.write_text(s)
           PY
       - name: Commit fix
