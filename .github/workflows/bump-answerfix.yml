@@ -10,34 +10,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Refresh integrated checkpoint scripts
+      - name: Refresh authoritative checkpoint scripts
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           p=Path('teacher-home.html')
           s=p.read_text()
-          for old in [
-              'teacher-control.html?v=20261004-answerfix1',
-              'teacher-control.html?v=20261004-movementfix2'
-          ]:
-              s=s.replace(old,'teacher-control.html?v=20261004-movementfix3')
+          s=re.sub(r'teacher-control\.html\?v=[A-Za-z0-9._-]+','teacher-control.html?v=20261005-movementfix4',s)
           p.write_text(s)
 
           p=Path('teacher-control.html')
           s=p.read_text()
-          s=s.replace('teacher-app.js?v=20261004-movementfix2','teacher-app.js?v=20261004-movementfix3')
-          s=s.replace('teacher-checkpoint-flow-v2.js?v=20261004-movementfix2','teacher-checkpoint-flow-v2.js?v=20261004-movementfix3')
-          s=s.replace('correctness-repair-addon.js?v=20261004-movementfix2','correctness-repair-addon.js?v=20261004-movementfix3')
-          s=s.replace('checkpoint-correctness-fix.js?v=20261004-movementfix2','checkpoint-correctness-fix.js?v=20261004-movementfix3')
-          s=s.replace('reveal-feedback-addon.js?v=20261004-movementfix2','reveal-feedback-addon.js?v=20261004-movementfix3')
+          for name in [
+              'teacher-app.js',
+              'teacher-checkpoint-flow-v2.js',
+              'correctness-repair-addon.js',
+              'checkpoint-correctness-fix.js',
+              'reveal-feedback-addon.js'
+          ]:
+              s=re.sub(re.escape(name)+r'\?v=[A-Za-z0-9._-]+',name+'?v=20261005-movementfix4',s)
+          p.write_text(s)
+
+          p=Path('team.html')
+          s=p.read_text()
+          for name in ['team-app.js','reveal-feedback-addon.js','team-checkpoint-addon.js']:
+              s=re.sub(re.escape(name)+r'\?v=[A-Za-z0-9._-]+',name+'?v=20261005-teamcheckpoint2',s)
           p.write_text(s)
           PY
       - name: Commit patch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add teacher-home.html teacher-control.html
+          git add teacher-home.html teacher-control.html team.html
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Refresh strict checkpoint movement and congratulations"
+          git commit -m "Refresh authoritative checkpoint movement v4"
           git push
