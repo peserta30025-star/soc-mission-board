@@ -8,6 +8,14 @@ const resumeBtn = document.querySelector('#resumeBtn');
 const resumeCode = document.querySelector('#resumeCode');
 const secureSetup = document.querySelector('#secureSetup');
 const originalCreate = createBtn?.onclick;
+const VIDEO_PREVIEW = 'https://drive.google.com/file/d/1CaxrhuVf8C_qMxjxAAIwzJdO3mTu8Hey/preview';
+
+function installTeacherVideo(){
+  const box=document.querySelector('#videoCase');
+  if(!box||box.dataset.beritaNyata==='1')return;
+  box.dataset.beritaNyata='1';
+  box.innerHTML=`<div class="eyebrow">WATCH THE CASE</div><h3>“Berita Nyata” — Video Viral dan Hoaks</h3><p class="mini">Tonton bersama melalui layar guru. Perhatikan sumber, konteks, tuduhan, dan dampak ketika informasi belum terverifikasi ikut disebarkan.</p><iframe title="Video kasus Berita Nyata" src="${VIDEO_PREVIEW}" allow="autoplay; fullscreen" allowfullscreen style="display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:18px;background:#111"></iframe><div class="notice mini" style="margin-top:10px">Setelah menonton, lanjutkan ke Question 1. Siswa menjawab melalui HP, sedangkan video cukup ditayangkan pada layar guru/proyektor.</div>`;
+}
 
 function asArray(v){
   if (Array.isArray(v)) return v;
@@ -119,10 +127,13 @@ async function createFromSharedConfig(){
 
 async function refreshSharedNotice(){
   try {
+    installTeacherVideo();
     const cfg = await sharedConfig();
     if (cfg) {
       if (secureSetup) secureSetup.classList.add('hidden');
-      showMiniMessage('✓ Mode HP memakai soal yang sama dari Teacher Setup. Perubahan baru diterapkan saat membuat sesi baru.');
+      const round3=asArray(cfg.rounds)?.[2];
+      const videoReady=round3?.questions?.[0]?.name==='VERIFY THE CLAIM';
+      showMiniMessage(videoReady?'✓ Mode HP memakai soal Round 3 “Berita Nyata” yang sama dari Teacher Setup. Buat sesi baru agar perubahan diterapkan.':'✓ Mode HP memakai soal yang sama dari Teacher Setup. Perubahan baru diterapkan saat membuat sesi baru.');
     }
   } catch {}
 }
@@ -134,5 +145,6 @@ if (createBtn) {
   });
 }
 
+installTeacherVideo();
 refreshSharedNotice();
 setTimeout(refreshSharedNotice,1200);
