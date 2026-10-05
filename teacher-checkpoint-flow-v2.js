@@ -116,7 +116,7 @@ function renderCheckpoint(){
   const moves=meta.checkpointMoves||{};
   const passed=TEAM_NAMES.filter((_,i)=>moves[`team${i+1}`]===true);
   document.getElementById('checkpointTitle').textContent=r<2?`ROUND ${r+1} SELESAI — CHECKPOINT ${target}`:'ROUND 3 SELESAI — FINISH';
-  document.getElementById('checkpointText').textContent=passed.length?`Pion bergerak hanya untuk kelompok yang lolos minimal ${PASS_CORRECT}/3: ${passed.join(', ')}.`:`Belum ada kelompok yang mencapai minimal ${PASS_CORRECT}/3. Semua pion tetap di tempat.`;
+  document.getElementById('checkpointText').textContent=passed.length?`🎉 Selamat ${passed.join(', ')}! Pion kalian berhasil maju karena memenuhi minimal ${PASS_CORRECT}/3 jawaban benar. Kelompok lain tetap di posisi sebelumnya.`:`Belum ada kelompok yang mencapai minimal ${PASS_CORRECT}/3. Semua pion tetap di posisi sebelumnya; poin tetap tersimpan.`;
   const continueBtn=document.getElementById('checkpointContinueBtn');
   continueBtn.textContent=r<2?`LANJUT ROUND ${r+2} →`:'LANJUT FINAL MISSION →';
   continueBtn.disabled=true;
@@ -207,9 +207,7 @@ async function checkpointAwareNext(){
 
 function hookNextButton(){
   const btn=document.getElementById('nextBtn');
-  if(!btn||btn.dataset.checkpointHook==='v2')return;
-  btn.dataset.checkpointHook='v2';
-  btn.onclick=()=>checkpointAwareNext().catch(err=>console.error('Checkpoint flow:',err));
+  if(btn)btn.dataset.checkpointHook='native-v5';
 }
 
 injectUI();

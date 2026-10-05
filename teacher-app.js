@@ -188,14 +188,48 @@ async function reveal(force=false){
 $('#revealBtn').onclick=()=>reveal(false).catch(e=>toast(e.message));
 $('#revealAnywayBtn').onclick=()=>reveal(true).catch(e=>toast(e.message));
 
+function roundCorrectCount(teamId, roundIndex){
+  let correct=0;
+  for(let qi=1;qi<=3;qi++){
+    const key=`r${roundIndex+1}q${qi}`;
+    const a=session?.answers?.[key]?.[teamId];
+    const expected=session?.private?.answerKeys?.[key];
+    if(a?.locked&&expected!==undefined&&validateAnswer(a.answer,expected))correct++;
+  }
+  return correct;
+}
+
+function passedRoundsBefore(teamId, roundIndex){
+  let passed=0;
+  for(let rr=0;rr<roundIndex;rr++)if(roundCorrectCount(teamId,rr)>=2)passed++;
+  return passed;
+}
+
 $('#nextBtn').onclick=async()=>{
   const m=session.meta||{};if(m.questionState!=='REVEALED')return;
   const r=Number(m.currentRound||0),q=Number(m.currentQuestion||0);const updates={};
-  if(q<2){updates['meta/currentQuestion']=q+1;updates['meta/questionState']='WAITING';}
-  else{
-    TEAMS.forEach(t=>{updates[`teams/${t.id}/position`]=r+1;updates[`teams/${t.id}/round${r+1}`]=true;});
-    if(r<2){updates['meta/currentRound']=r+1;updates['meta/currentQuestion']=0;updates['meta/questionState']='WAITING';}
-    else{updates['meta/status']='FINAL_MISSION';updates['meta/questionState']='COMPLETED';}
+  if(q<2){
+    updates['meta/currentQuestion']=q+1;
+    updates['meta/questionState']='WAITING';
+  }else{
+    const moves={},counts={},from={},to={};
+    TEAMS.forEach(t=>{
+      const correct=roundCorrectCount(t.id,r);
+      const pass=correct>=2;
+      const before=passedRoundsBefore(t.id,r);
+      const exactPos=Math.min(3,before+(pass?1:0));
+      counts[t.id]=correct;
+      moves[t.id]=pass;
+      from[t.id]=Math.min(3,before);
+      to[t.id]=exactPos;
+      updates[`teams/${t.id}/position`]=exactPos;
+      updates[`teams/${t.id}/round${r+1}`]=pass;
+    });
+    updates['meta/checkpointMoves']=moves;
+    updates['meta/checkpointCorrectCounts']=counts;
+    updates['meta/checkpointFromPositions']=from;
+    updates['meta/checkpointToPositions']=to;
+    updates['meta/questionState']='CHECKPOINT';
   }
   await update(sessionRef(sessionCode),updates);
 };

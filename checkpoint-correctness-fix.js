@@ -171,9 +171,7 @@ async function nextWithCorrectMovement(e){
 
 function bindNext(){
   const btn=document.getElementById('nextBtn');
-  if(!btn||btn.dataset.correctMovementFix==='4')return;
-  btn.dataset.correctMovementFix='4';
-  btn.addEventListener('click',nextWithCorrectMovement,true);
+  if(btn)btn.dataset.correctMovementFix='5';
 }
 
 function attach(code){

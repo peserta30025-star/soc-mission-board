@@ -1,4 +1,4 @@
-import { get, onValue, sessionRef, currentQuestionKey } from './firebase-core.js?v=20261004-answerfix1';
+import { get, onValue, sessionRef, currentQuestionKey } from './firebase-core.js';
 
 const TEAM_NAMES=['Kelompok 1','Kelompok 2','Kelompok 3','Kelompok 4','Kelompok 5','Kelompok 6'];
 let teacherCode='';

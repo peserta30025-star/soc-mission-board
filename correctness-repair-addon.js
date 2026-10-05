@@ -1,4 +1,4 @@
-import { get, update, onValue, sessionRef, validateAnswer } from './firebase-core.js?v=20261004-answerfix1';
+import { get, update, onValue, sessionRef, validateAnswer } from './firebase-core.js';
 
 const TEAM_IDS=['team1','team2','team3','team4','team5','team6'];
 let activeCode='';
