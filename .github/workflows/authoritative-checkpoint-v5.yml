@@ -1,0 +1,125 @@
+name: Authoritative checkpoint v5
+on:
+  push:
+    paths:
+      - '.github/workflows/authoritative-checkpoint-v5.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make teacher checkpoint movement authoritative
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # 1) Teacher app becomes the single source of truth for round completion.
+          p=Path('teacher-app.js')
+          s=p.read_text()
+          pattern=r"\$\('#nextBtn'\)\.onclick=async\(\)=>\{.*?\n\};\n\n\$\('#pauseBtn'\)\.onclick"
+          replacement=r'''function roundCorrectCount(teamId, roundIndex){
+            let correct=0;
+            for(let qi=1;qi<=3;qi++){
+              const key=`r${roundIndex+1}q${qi}`;
+              const a=session?.answers?.[key]?.[teamId];
+              const expected=session?.private?.answerKeys?.[key];
+              if(a?.locked&&expected!==undefined&&validateAnswer(a.answer,expected))correct++;
+            }
+            return correct;
+          }
+
+          function passedRoundsBefore(teamId, roundIndex){
+            let passed=0;
+            for(let rr=0;rr<roundIndex;rr++)if(roundCorrectCount(teamId,rr)>=2)passed++;
+            return passed;
+          }
+
+          $('#nextBtn').onclick=async()=>{
+            const m=session.meta||{};if(m.questionState!=='REVEALED')return;
+            const r=Number(m.currentRound||0),q=Number(m.currentQuestion||0);const updates={};
+            if(q<2){
+              updates['meta/currentQuestion']=q+1;
+              updates['meta/questionState']='WAITING';
+            }else{
+              const moves={},counts={},from={},to={};
+              TEAMS.forEach(t=>{
+                const correct=roundCorrectCount(t.id,r);
+                const pass=correct>=2;
+                const before=passedRoundsBefore(t.id,r);
+                const exactPos=Math.min(3,before+(pass?1:0));
+                counts[t.id]=correct;
+                moves[t.id]=pass;
+                from[t.id]=Math.min(3,before);
+                to[t.id]=exactPos;
+                updates[`teams/${t.id}/position`]=exactPos;
+                updates[`teams/${t.id}/round${r+1}`]=pass;
+              });
+              updates['meta/checkpointMoves']=moves;
+              updates['meta/checkpointCorrectCounts']=counts;
+              updates['meta/checkpointFromPositions']=from;
+              updates['meta/checkpointToPositions']=to;
+              updates['meta/questionState']='CHECKPOINT';
+            }
+            await update(sessionRef(sessionCode),updates);
+          };
+
+          $('#pauseBtn').onclick'''
+          ns,n=re.subn(pattern,replacement,s,flags=re.S)
+          if n!=1:
+            raise SystemExit(f'teacher-app next handler replacement count={n}')
+          p.write_text(ns)
+
+          # 2) Board overlay only renders checkpoint state; it must not replace Teacher app's Next handler.
+          p=Path('teacher-checkpoint-flow-v2.js')
+          s=p.read_text()
+          s=s.replace("document.getElementById('checkpointText').textContent=passed.length?`Pion bergerak hanya untuk kelompok yang lolos minimal ${PASS_CORRECT}/3: ${passed.join(', ')}.`:`Belum ada kelompok yang mencapai minimal ${PASS_CORRECT}/3. Semua pion tetap di tempat.`;",
+                      "document.getElementById('checkpointText').textContent=passed.length?`🎉 Selamat ${passed.join(', ')}! Pion kalian berhasil maju karena memenuhi minimal ${PASS_CORRECT}/3 jawaban benar. Kelompok lain tetap di posisi sebelumnya.`:`Belum ada kelompok yang mencapai minimal ${PASS_CORRECT}/3. Semua pion tetap di posisi sebelumnya; poin tetap tersimpan.`;")
+          s=re.sub(r"function hookNextButton\(\)\{.*?\n\}","function hookNextButton(){\n  const btn=document.getElementById('nextBtn');\n  if(btn)btn.dataset.checkpointHook='native-v5';\n}",s,flags=re.S)
+          p.write_text(s)
+
+          # 3) Repair script stays as a safety net during CHECKPOINT, but no longer intercepts clicks.
+          p=Path('checkpoint-correctness-fix.js')
+          s=p.read_text()
+          s=re.sub(r"function bindNext\(\)\{.*?\n\}","function bindNext(){\n  const btn=document.getElementById('nextBtn');\n  if(btn)btn.dataset.correctMovementFix='5';\n}",s,flags=re.S)
+          p.write_text(s)
+
+          # 4) Use exactly the same Firebase module URL everywhere to avoid duplicate [DEFAULT] app initialization.
+          for name in ['correctness-repair-addon.js','reveal-feedback-addon.js','team-checkpoint-addon.js']:
+            p=Path(name)
+            s=p.read_text()
+            s=re.sub(r"from './firebase-core\.js\?v=[^']+';","from './firebase-core.js';",s)
+            p.write_text(s)
+
+          # 5) Bust browser caches in teacher/team entry pages and integrated home.
+          p=Path('teacher-control.html')
+          s=p.read_text()
+          s=re.sub(r"teacher-app\.js\?v=[^\"]+",'teacher-app.js?v=20261005-movementfix5',s)
+          s=re.sub(r"teacher-checkpoint-flow-v2\.js\?v=[^\"]+",'teacher-checkpoint-flow-v2.js?v=20261005-movementfix5',s)
+          s=re.sub(r"correctness-repair-addon\.js\?v=[^\"]+",'correctness-repair-addon.js?v=20261005-movementfix5',s)
+          s=re.sub(r"checkpoint-correctness-fix\.js\?v=[^\"]+",'checkpoint-correctness-fix.js?v=20261005-movementfix5',s)
+          s=re.sub(r"reveal-feedback-addon\.js\?v=[^\"]+",'reveal-feedback-addon.js?v=20261005-movementfix5',s)
+          p.write_text(s)
+
+          p=Path('team.html')
+          s=p.read_text()
+          s=re.sub(r"team-app\.js\?v=[^\"]+",'team-app.js?v=20261005-teamcheckpoint3',s)
+          s=re.sub(r"reveal-feedback-addon\.js\?v=[^\"]+",'reveal-feedback-addon.js?v=20261005-teamcheckpoint3',s)
+          s=re.sub(r"team-checkpoint-addon\.js\?v=[^\"]+",'team-checkpoint-addon.js?v=20261005-teamcheckpoint3',s)
+          p.write_text(s)
+
+          p=Path('teacher-home.html')
+          s=p.read_text()
+          s=re.sub(r"teacher-control\.html\?v=[^'\"&]+",'teacher-control.html?v=20261005-movementfix5',s)
+          p.write_text(s)
+          PY
+      - name: Commit authoritative fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add teacher-app.js teacher-checkpoint-flow-v2.js checkpoint-correctness-fix.js correctness-repair-addon.js reveal-feedback-addon.js team-checkpoint-addon.js teacher-control.html team.html teacher-home.html
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Make checkpoint movement authoritative and synchronized"
+          git push
