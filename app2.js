@@ -1,4 +1,22 @@
+function manualRoundCorrectCount(t,r){
+  const qs=new Set();
+  (t.answers||[]).forEach(a=>{if(Number(a.round)===r&&a.correct===true)qs.add(Number(a.question));});
+  return qs.size;
+}
+function repairManualProgress(){
+  let changed=false;
+  run.teams.forEach(t=>{
+    let exact=0;
+    for(let rr=0;rr<3;rr++){
+      if(t.roundCompleted?.[rr]&&manualRoundCorrectCount(t,rr)>=2)exact++;
+    }
+    if(Number(t.progress||0)!==exact){t.progress=exact;changed=true;}
+  });
+  if(changed)saveRun();
+}
+
 function renderBoard(){
+  repairManualProgress();
   $('#boardGameTitle').textContent=config.gameName;
   const maxProgress=Math.max(...run.teams.map(t=>t.progress));
   const stageStatus=n=>maxProgress>=n?'done':(run.roundIndex===n&&!run.gameComplete?'active':'');
@@ -126,12 +144,30 @@ function retryIncorrect(){
 function advanceQuestion(){run.questionIndex++;resetQuestionState();saveRun();renderMission();go('mission');}
 function completeRound(){
   const r=run.roundIndex; const from=run.teams.map(t=>t.progress);
-  run.teams.forEach(t=>{t.roundCompleted[r]=true;t.progress=Math.max(t.progress,r+1);}); const to=run.teams.map(t=>t.progress); moveAnimation={from,to};
+  const qualified=[]; const stayed=[];
+  run.teams.forEach(t=>{
+    t.roundCompleted[r]=true;
+    const correct=manualRoundCorrectCount(t,r);
+    if(correct>=2){
+      t.progress=Math.min(3,Number(t.progress||0)+1);
+      qualified.push({name:t.name,correct});
+    }else{
+      stayed.push({name:t.name,correct});
+    }
+  });
+  const to=run.teams.map(t=>t.progress); moveAnimation={from,to};
   const completedRound=r+1; run.questionIndex=0; run.roundIndex++;
   if(run.roundIndex>=3){run.gameComplete=true;run.roundIndex=2;run.questionIndex=2;}
   resetQuestionState(); saveRun(); go('board');
-  $('#celebrateTitle').textContent=`🎉 ROUND ${completedRound} COMPLETE`;
-  $('#celebrateText').textContent=completedRound===1?'🚩 CHECKPOINT 1 REACHED!':completedRound===2?'🚩 CHECKPOINT 2 REACHED!':'🏆 FINISH REACHED! Lanjut ke Final Mission.';
+  const passedNames=qualified.map(x=>x.name);
+  const stayedNames=stayed.map(x=>x.name);
+  if(passedNames.length){
+    $('#celebrateTitle').textContent=`🎉 SELAMAT ${passedNames.join(', ')}!`;
+    $('#celebrateText').textContent=`Pion berhasil maju 1 checkpoint karena benar minimal 2 dari 3 soal: ${qualified.map(x=>`${x.name} (${x.correct}/3)`).join(', ')}.${stayedNames.length?` Kelompok yang tetap di posisi sebelumnya: ${stayed.map(x=>`${x.name} (${x.correct}/3)`).join(', ')}.`:''}`;
+  }else{
+    $('#celebrateTitle').textContent=`ROUND ${completedRound} SELESAI`;
+    $('#celebrateText').textContent='Belum ada kelompok yang mencapai minimal 2 dari 3 jawaban benar. Semua pion tetap di posisi sebelumnya; poin tetap tersimpan.';
+  }
   setTimeout(()=>$('#celebration').classList.add('show'),350);
 }
 $('#closeCelebrate').onclick=()=>$('#celebration').classList.remove('show');

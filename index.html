@@ -70,7 +70,7 @@
 
 <section class="page" id="page-board">
   <div class="section-head"><div><div class="eyebrow">Mission Board</div><h2 id="boardGameTitle">SOC Mission Board</h2></div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="resetRunBtn">↺ Reset Run</button><button class="btn primary" id="boardNextBtn">Mulai Round 1 →</button></div></div>
-  <div class="board-layout"><div class="board" id="board"></div><div class="card"><h3 style="margin-bottom:12px">TEAM PROGRESS</h3><div class="progress-panel" id="progressPanel"></div><div class="notice mini" style="margin-top:14px">Pion bergerak setelah satu round selesai: Round 1 → Checkpoint 1, Round 2 → Checkpoint 2, Round 3 → Finish.</div></div></div>
+  <div class="board-layout"><div class="board" id="board"></div><div class="card"><h3 style="margin-bottom:12px">TEAM PROGRESS</h3><div class="progress-panel" id="progressPanel"></div><div class="notice mini" style="margin-top:14px">Pion bergerak 1 checkpoint hanya jika kelompok benar minimal 2 dari 3 soal pada round tersebut. Poin tetap tersimpan meskipun pion tidak bergerak.</div></div></div>
 </section>
 
 <section class="page" id="page-mission">
@@ -112,7 +112,7 @@
 <div class="mission-complete" id="celebration"><div class="celebrate"><div style="font-size:4rem">🏆</div><h2 id="celebrateTitle">ROUND COMPLETE!</h2><p id="celebrateText" class="muted"></p><button class="btn primary" id="closeCelebrate">Continue</button></div></div>
 <div class="toast" id="toast"></div>
 <script src="app1.js"></script>
-<script src="app2.js"></script>
+<script src="app2.js?v=20261005-manualmove1"></script>
 <script src="enhancements.js?v=5"></script>
 <script type="module" src="shared-config-sync.js?v=20261003-shared1"></script>
 </body>
