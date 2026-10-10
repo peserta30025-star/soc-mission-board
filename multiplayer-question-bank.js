@@ -2,161 +2,27 @@ export const TEAM_COLORS = ['#4aa3ff','#56df9b','#ffd166','#ff6b6b','#b990ff','#
 
 export const QUESTION_BANK = [
   {
-    round: 1,
-    roundName: 'ENTER THE NETWORK',
-    focus: 'Masyarakat Jaringan / Network Society',
-    level: 'UNDERSTAND & IDENTIFY',
-    questions: [
-      {
-        id: 'r1q1',
-        name: 'CONNECTED SOCIETY',
-        type: 'single-choice',
-        score: 10,
-        question: 'Kelas IX membuat proyek bersama dengan siswa dari sekolah lain. Mereka membagi tugas melalui grup chat, mengedit dokumen bersama secara daring, dan melakukan rapat video. Ciri masyarakat jaringan yang paling jelas pada situasi tersebut adalah ...',
-        options: [
-          'A. Hubungan sosial hanya terjadi jika orang bertemu langsung',
-          'B. Interaksi dan kerja sama terhubung melalui jaringan komunikasi digital',
-          'C. Teknologi membuat manusia tidak lagi membutuhkan kelompok sosial',
-          'D. Semua hubungan masyarakat menjadi bersifat pribadi'
-        ],
-        explanation: 'Masyarakat jaringan ditandai oleh hubungan dan aktivitas sosial yang terhubung melalui jaringan informasi dan komunikasi. Teknologi memungkinkan orang berinteraksi dan bekerja sama meskipun tidak berada di tempat yang sama.'
-      },
-      {
-        id: 'r1q2',
-        name: 'NETWORK CHECK',
-        type: 'true-false',
-        score: 10,
-        question: 'Benar atau Salah: Dalam masyarakat jaringan, hubungan sosial dapat terbentuk dan dipertahankan melampaui batas ruang karena didukung teknologi informasi dan komunikasi.',
-        options: ['BENAR','SALAH'],
-        explanation: 'Pernyataan ini benar. Jaringan digital memungkinkan komunikasi dan pertukaran informasi berlangsung lintas tempat dan waktu, sehingga hubungan sosial tidak selalu bergantung pada pertemuan fisik.'
-      },
-      {
-        id: 'r1q3',
-        name: 'MATCH THE NETWORK',
-        type: 'matching',
-        score: 10,
-        question: 'Cocokkan karakteristik masyarakat jaringan dengan contoh yang paling tepat.',
-        options: [
-          '1. Terhubung melalui jaringan',
-          '2. Informasi bergerak cepat',
-          '3. Kerja sama tidak dibatasi lokasi'
-        ],
-        matchOptions: [
-          'A. Siswa di Bandung dan Surabaya menyusun presentasi pada dokumen daring yang sama',
-          'B. Pengumuman kegiatan sekolah tersebar ke seluruh kelas melalui grup dalam beberapa menit',
-          'C. Anggota komunitas saling berkomunikasi melalui platform digital'
-        ],
-        explanation: 'Jaringan digital menghubungkan orang, mempercepat arus informasi, dan memungkinkan kerja sama berlangsung tanpa harus berada di lokasi yang sama.'
-      }
+    round:1, roundName:'ENTER THE NETWORK', focus:'Masyarakat Jaringan / Network Society', level:'LOTS — UNDERSTAND & IDENTIFY',
+    questions:[
+      {id:'r1q1',name:'CIRI MASYARAKAT JARINGAN',type:'single-choice',score:10,cognitiveLevel:'LOTS',question:'Kelas IX menggunakan grup pesan, dokumen daring, dan panggilan video untuk bekerja sama dengan siswa dari sekolah lain. Ciri masyarakat jaringan yang paling tampak pada situasi tersebut adalah ...',options:['A. Interaksi sosial hanya berlangsung melalui pertemuan langsung','B. Interaksi sosial terhubung melalui jaringan komunikasi digital','C. Interaksi sosial berlangsung tanpa pertukaran informasi','D. Interaksi sosial berpusat pada kegiatan individu tanpa jaringan'],answer:'B',explanation:'Masyarakat jaringan ditandai oleh hubungan sosial yang terhubung melalui jaringan informasi dan komunikasi. Teknologi memungkinkan kerja sama tetap berlangsung meskipun orang berada di tempat yang berbeda.'},
+      {id:'r1q2',name:'ARUS INFORMASI',type:'single-choice',score:10,cognitiveLevel:'LOTS',question:'Pernyataan yang paling tepat menggambarkan masyarakat jaringan adalah ...',options:['A. Hubungan masyarakat dibatasi oleh kedekatan wilayah tempat tinggal','B. Arus informasi dan interaksi dapat melintasi ruang melalui teknologi','C. Komunikasi digital menggantikan seluruh bentuk interaksi langsung','D. Informasi di jaringan digital selalu dapat dipercaya tanpa pemeriksaan'],answer:'B',explanation:'Dalam masyarakat jaringan, informasi dan interaksi dapat bergerak melampaui batas ruang dengan bantuan teknologi. Namun, interaksi langsung tetap ada dan informasi digital tetap perlu diperiksa.'},
+      {id:'r1q3',name:'CONTOH KERJA SAMA JARINGAN',type:'single-choice',score:10,cognitiveLevel:'LOTS',question:'Kegiatan yang paling tepat menunjukkan kerja sama dalam masyarakat jaringan adalah ...',options:['A. Seorang siswa mengerjakan tugas sendiri tanpa berkomunikasi','B. Siswa membaca sumber belajar secara mandiri di perpustakaan','C. Siswa dari dua kota menyunting dokumen yang sama secara daring','D. Siswa mengumpulkan tugas cetak kepada guru setelah pelajaran'],answer:'C',explanation:'Kerja sama dalam masyarakat jaringan terlihat ketika orang yang berada di lokasi berbeda dapat berkolaborasi melalui jaringan digital.'}
     ]
   },
   {
-    round: 2,
-    roundName: 'DIGITAL INTERACTION',
-    focus: 'Interaksi masyarakat di dunia nyata dan dunia digital',
-    level: 'COMPARE & ANALYZE',
-    questions: [
-      {
-        id: 'r2q1',
-        name: 'REAL OR DIGITAL?',
-        type: 'case-study',
-        score: 15,
-        question: 'Raka salah memahami pesan singkat dari temannya karena tidak melihat ekspresi wajah dan nada bicara. Saat bertemu langsung, masalah tersebut cepat selesai setelah mereka menjelaskan maksud masing-masing. Kesimpulan yang paling tepat adalah ...',
-        options: [
-          'A. Interaksi digital selalu lebih buruk daripada interaksi langsung',
-          'B. Interaksi langsung memberi lebih banyak petunjuk nonverbal, sedangkan interaksi digital perlu pesan yang lebih jelas agar tidak mudah disalahartikan',
-          'C. Komunikasi digital tidak dapat digunakan untuk menyelesaikan masalah',
-          'D. Interaksi langsung tidak memerlukan kemampuan berkomunikasi'
-        ],
-        explanation: 'Interaksi langsung memiliki petunjuk nonverbal seperti ekspresi dan intonasi. Dalam ruang digital, pesan perlu disusun lebih jelas karena sebagian petunjuk tersebut tidak selalu terlihat.'
-      },
-      {
-        id: 'r2q2',
-        name: 'DIGITAL INTERACTION SIGNALS',
-        type: 'multiple-response',
-        score: 15,
-        instruction: 'Pilih semua jawaban yang tepat.',
-        question: 'Manakah situasi yang menunjukkan karakteristik interaksi digital? Pilih semua jawaban yang tepat.',
-        options: [
-          'A. Informasi dapat dikirim dengan cepat kepada banyak orang',
-          'B. Interaksi hanya dapat berlangsung jika semua orang berada di ruangan yang sama',
-          'C. Jejak komunikasi dapat tersimpan sebagai pesan, foto, atau unggahan',
-          'D. Orang dapat berinteraksi secara sinkron maupun tidak sinkron',
-          'E. Semua informasi digital pasti benar karena dapat dibaca banyak orang'
-        ],
-        explanation: 'Interaksi digital dapat berlangsung cepat, meninggalkan jejak digital, dan berlangsung secara sinkron maupun tidak sinkron. Namun, informasi digital tetap perlu diperiksa kebenarannya.'
-      },
-      {
-        id: 'r2q3',
-        name: 'COMPARE THE SITUATION',
-        type: 'case-study',
-        score: 15,
-        question: 'Kelompok Dina berdiskusi di kelas lalu melanjutkan pembagian tugas melalui grup chat pada malam hari. Agar kerja kelompok tetap efektif, tindakan yang paling tepat adalah ...',
-        options: [
-          'A. Menganggap pesan grup tidak penting karena diskusi utama sudah terjadi di kelas',
-          'B. Menggunakan kelebihan kedua bentuk interaksi: menyepakati keputusan penting saat diskusi, lalu memakai grup digital untuk koordinasi dan dokumentasi tugas',
-          'C. Memindahkan seluruh komunikasi ke grup digital agar tidak perlu bertemu sama sekali',
-          'D. Mengirim pesan sebanyak mungkin tanpa aturan waktu dan tanpa memastikan semua anggota memahami tugas'
-        ],
-        explanation: 'Interaksi nyata dan digital dapat saling melengkapi. Pertemuan langsung membantu penjelasan dan negosiasi, sedangkan ruang digital memudahkan koordinasi, dokumentasi, dan komunikasi jarak jauh.'
-      }
+    round:2, roundName:'DIGITAL INTERACTION', focus:'Interaksi masyarakat di dunia nyata dan dunia digital', level:'MOTS — APPLY & ANALYZE',
+    questions:[
+      {id:'r2q1',name:'KOMUNIKASI YANG JELAS',type:'single-choice',score:15,cognitiveLevel:'MOTS',question:'Raka salah memahami pesan singkat dari temannya karena tidak melihat ekspresi dan nada bicara. Tindakan yang paling tepat agar komunikasi digital berikutnya lebih jelas adalah ...',options:['A. Menulis pesan dengan jelas lalu memastikan penerima memahaminya','B. Menghindari semua komunikasi digital dan hanya bertemu langsung','C. Mengirim lebih banyak pesan tanpa menunggu tanggapan penerima','D. Menggunakan singkatan sebanyak mungkin agar pesan lebih cepat dikirim'],answer:'A',explanation:'Komunikasi digital memiliki keterbatasan petunjuk nonverbal. Pesan yang jelas dan konfirmasi pemahaman dapat mengurangi salah tafsir.'},
+      {id:'r2q2',name:'MEMADUKAN INTERAKSI',type:'single-choice',score:15,cognitiveLevel:'MOTS',question:'Kelompok Dina membahas keputusan penting saat bertemu di kelas, lalu menggunakan grup pesan untuk membagi tugas dan mengirim hasil kerja. Alasan penggunaan kedua bentuk interaksi tersebut tepat adalah ...',options:['A. Interaksi langsung dan digital dapat saling melengkapi sesuai kebutuhan','B. Interaksi digital selalu lebih efektif daripada pertemuan langsung','C. Interaksi langsung hanya diperlukan jika jaringan internet tidak tersedia','D. Interaksi digital membuat kesepakatan kelompok tidak lagi diperlukan'],answer:'A',explanation:'Interaksi langsung membantu penjelasan dan kesepakatan, sedangkan interaksi digital memudahkan koordinasi dan dokumentasi. Keduanya dapat digunakan sesuai kebutuhan.'},
+      {id:'r2q3',name:'CEK INFORMASI GRUP',type:'single-choice',score:15,cognitiveLevel:'MOTS',question:'Informasi jadwal kegiatan di grup kelas berubah setelah beberapa kali diteruskan. Tindakan yang paling tepat sebelum membagikan informasi tersebut adalah ...',options:['A. Membagikan versi yang paling baru karena terlihat lebih meyakinkan','B. Memeriksa pesan sumber dan mengonfirmasi informasi kepada pihak terkait','C. Menunggu sampai banyak teman membagikan informasi yang sama','D. Menghapus semua pesan agar tidak ada informasi yang beredar di grup'],answer:'B',explanation:'Sebelum meneruskan informasi, siswa perlu memeriksa sumber awal dan mengonfirmasi kepada pihak yang berwenang agar tidak menyebarkan informasi yang keliru.'}
     ]
   },
   {
-    round: 3,
-    roundName: 'DIGITAL RESPONSIBILITY',
-    focus: 'Respect • Educate • Protect',
-    level: 'ANALYZE • EVALUATE • DECIDE',
-    videoCase: true,
-    questions: [
-      {
-        id: 'r3q1',
-        name: 'FIND THE PROBLEM',
-        type: 'multiple-response',
-        score: 20,
-        instruction: 'Pilih semua jawaban yang tepat berdasarkan video kasus.',
-        question: 'Perilaku mana yang menjadi masalah dalam kasus Nisa? Pilih semua jawaban yang tepat.',
-        options: [
-          'A. Mengambil screenshot percakapan pribadi tanpa persetujuan',
-          'B. Meneruskan screenshot ke grup kelas',
-          'C. Menanyakan sumber informasi dan apakah informasi sudah diperiksa',
-          'D. Menertawakan dan meminta foto lain',
-          'E. Menyebarkan informasi yang belum diketahui kebenarannya',
-          'F. Mengingatkan bahwa percakapan tersebut bersifat pribadi'
-        ],
-        explanation: 'Masalah utamanya adalah pelanggaran privasi, penyebaran ulang tanpa izin, komentar yang merendahkan, dan penyebaran informasi yang belum terverifikasi. Memeriksa sumber dan mengingatkan privasi justru merupakan tindakan yang bertanggung jawab.'
-      },
-      {
-        id: 'r3q2',
-        name: 'MATCH THE PRINCIPLE',
-        type: 'matching',
-        score: 20,
-        question: 'Cocokkan tindakan berikut dengan prinsip interaksi digital yang paling sesuai.',
-        options: [
-          '1. Tidak menertawakan atau mempermalukan Nisa di grup',
-          '2. Memeriksa sumber sebelum mempercayai dan meneruskan informasi',
-          '3. Tidak menyebarkan screenshot pribadi dan menjaga data pribadi'
-        ],
-        matchOptions: ['A. Respect','B. Educate','C. Protect'],
-        explanation: 'Respect berkaitan dengan menghargai orang lain; Educate berkaitan dengan menggunakan informasi secara cerdas dan memeriksa kebenarannya; Protect berkaitan dengan menjaga keamanan, privasi, dan data pribadi.'
-      },
-      {
-        id: 'r3q3',
-        name: 'WHAT WOULD YOU DO?',
-        type: 'multiple-response',
-        score: 20,
-        instruction: 'Pilih semua tindakan yang tepat jika kamu berada di dalam grup tersebut.',
-        question: 'Setelah melihat screenshot pribadi Nisa tersebar dan muncul informasi yang belum jelas kebenarannya, apa yang sebaiknya kamu lakukan?',
-        options: [
-          'A. Tidak ikut meneruskan screenshot',
-          'B. Mengingatkan anggota grup agar menghentikan penyebaran',
-          'C. Memeriksa sumber informasi sebelum mempercayai atau membagikannya',
-          'D. Menyimpan screenshot untuk dibagikan nanti kepada teman dekat',
-          'E. Mendukung Nisa dan menyarankan melapor kepada guru/orang dewasa tepercaya jika situasi berlanjut',
-          'F. Menambahkan komentar lucu agar suasana grup lebih ramai'
-        ],
-        explanation: 'Tindakan yang bertanggung jawab adalah menghentikan penyebaran, menjaga privasi, memeriksa kebenaran informasi, serta memberi dukungan dan mencari bantuan yang tepat bila diperlukan.'
-      }
+    round:3, roundName:'DIGITAL RESPONSIBILITY', focus:'Literasi digital, hoaks, dan tanggung jawab bermedia • Respect • Educate • Protect', level:'MOTS–HOTS — ANALYZE, EVALUATE & DECIDE', videoCase:true,
+    questions:[
+      {id:'r3q1',name:'VERIFY BEFORE SHARE',type:'single-choice',score:20,cognitiveLevel:'MOTS',instruction:'Tonton video “Berita Nyata” pada layar guru, lalu jawab berdasarkan informasi yang ditampilkan.',question:'Dalam video, sebuah cuplikan viral dibagikan bersama klaim tertentu. Sebelum meneruskan cuplikan serupa, tindakan yang paling tepat adalah ...',options:['A. Membagikannya segera agar teman menerima informasi lebih cepat','B. Memeriksa sumber, konteks, dan pembanding tepercaya sebelum membagikan','C. Menambahkan pendapat pribadi agar isi unggahan lebih menarik','D. Mengirimkannya hanya kepada teman dekat tanpa memeriksa informasi'],answer:'B',explanation:'Informasi yang viral belum tentu benar. Sebelum membagikan, kita perlu memeriksa sumber asli, memahami konteks, dan membandingkannya dengan sumber tepercaya.'},
+      {id:'r3q2',name:'RESPONS YANG BERTANGGUNG JAWAB',type:'single-choice',score:20,cognitiveLevel:'HOTS',instruction:'Gunakan kasus dalam video untuk menilai tindakan yang paling bertanggung jawab.',question:'Seorang teman mengunggah cuplikan dari video dengan tuduhan terhadap seseorang, tetapi belum ada sumber tepercaya yang mendukung tuduhan tersebut. Respons yang paling bertanggung jawab adalah ...',options:['A. Ikut memberi komentar agar unggahan segera mendapat perhatian','B. Meminta penyebaran dihentikan dan mengajak teman memeriksa kebenarannya','C. Membagikan ulang dengan catatan bahwa informasinya mungkin belum benar','D. Menyimpan cuplikan lalu mengirimkannya secara pribadi kepada teman lain'],answer:'B',explanation:'Tindakan yang bertanggung jawab adalah menghentikan penyebaran informasi yang belum terverifikasi dan mengajak orang lain memeriksa kebenarannya. Ini mencerminkan sikap Respect, Educate, dan Protect.'},
+      {id:'r3q3',name:'ATURAN BERBAGI INFORMASI',type:'single-choice',score:20,cognitiveLevel:'HOTS',instruction:'Nilai pilihan aturan berdasarkan pelajaran dari video.',question:'Sekolah ingin membuat aturan berbagi informasi di grup kelas berdasarkan pelajaran dari video. Aturan yang paling efektif adalah ...',options:['A. Informasi populer boleh dibagikan jika sudah dibahas oleh banyak akun','B. Informasi dibagikan setelah sumber, konteks, dan dampaknya diperiksa','C. Informasi dari internet hanya boleh dibagikan oleh ketua kelas','D. Informasi yang diteruskan oleh teman dianggap cukup dapat dipercaya'],answer:'B',explanation:'Aturan yang baik tidak bergantung pada popularitas atau siapa yang membagikan. Informasi perlu diperiksa sumber, konteks, kebenaran, dan dampaknya sebelum diteruskan.'}
     ]
   }
 ];
