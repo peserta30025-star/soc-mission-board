@@ -1,7 +1,7 @@
 import { auth, TEACHER_UID, teacherConfigRef, get, update } from './firebase-core.js';
 
 const STORAGE_KEY='mb_config_v4_digital_society';
-const VERSION='question_rules_smp_20261010_v2';
+const VERSION='question_rules_smp_20261010_v3';
 const VIDEO_SRC='https://drive.google.com/file/d/1CaxrhuVf8C_qMxjxAAIwzJdO3mTu8Hey/preview';
 
 const ROUNDS=[
@@ -49,7 +49,7 @@ const ROUNDS=[
           explanation:'Komunikasi digital memiliki keterbatasan petunjuk nonverbal. Pesan yang jelas dan konfirmasi pemahaman dapat mengurangi salah tafsir.'
         },
         {
-          name:'DIGITAL INTERACTION SIGNALS', type:'multiple-response', score:15, cognitiveLevel:'MOTS',
+          name:'DIGITAL INTERACTION SIGNALS', type:'multiple-response', score:15, cognitiveLevel:'MOTS', selectionCount:2,
           instruction:'Pilih DUA jawaban yang tepat.',
           question:'Dua ciri yang menunjukkan interaksi digital adalah ...',
           options:['A. Informasi dapat dikirim kepada banyak orang dalam waktu singkat','B. Interaksi hanya dapat terjadi jika semua orang berada di tempat yang sama','C. Komunikasi dapat berlangsung pada waktu yang sama atau berbeda','D. Informasi digital selalu benar karena dapat diakses banyak orang'],
@@ -89,7 +89,7 @@ const ROUNDS=[
           explanation:'Respect berarti menghargai orang lain dan tidak menuduh tanpa dasar. Educate berarti memeriksa sumber dan konteks. Protect berarti mencegah penyebaran informasi yang dapat merugikan diri sendiri atau orang lain.'
         },
         {
-          name:'RESPONS PALING BERTANGGUNG JAWAB', type:'multiple-response', score:20, cognitiveLevel:'HOTS',
+          name:'RESPONS PALING BERTANGGUNG JAWAB', type:'multiple-response', score:20, cognitiveLevel:'HOTS', selectionCount:2,
           instruction:'Pilih DUA jawaban yang paling tepat.',
           question:'Seorang teman mengirim cuplikan viral ke grup kelas, tetapi sumber dan konteksnya belum jelas. Dua tindakan yang paling bertanggung jawab adalah ...',
           options:['A. Menahan diri untuk tidak meneruskan cuplikan tersebut','B. Memeriksa sumber asli dan membandingkannya dengan informasi tepercaya','C. Membagikannya kembali dengan catatan bahwa informasinya belum pasti','D. Menyimpannya lalu mengirimkannya secara pribadi kepada teman dekat'],
