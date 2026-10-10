@@ -81,7 +81,7 @@ function answerCard(i,q){
   } else {
     const vals=q.type==='true-false'?['BENAR','SALAH']:q.options.map((_,idx)=>String.fromCharCode(65+idx));
     const multi=q.type==='multiple-response';
-    control=`<div class="answer-select ${multi?'multi-select':''}" ${hidden}>${vals.map(v=>`<button type="button" data-team="${i}" data-val="${v}">${v}</button>`).join('')}</div>${multi?'<div class="mini muted">Boleh memilih lebih dari satu.</div>':''}`;
+    control=`<div class="answer-select ${multi?'multi-select':''}" ${hidden}>${vals.map(v=>`<button type="button" data-team="${i}" data-val="${v}">${v}</button>`).join('')}</div>${multi?`<div class="mini muted">Pilih tepat ${Number(q.selectionCount||2)} jawaban.</div>`:''}`;
   }
   return `<div class="team-answer ${run.locked[i]?'locked':''}" id="teamAnswer${i}"><div class="team-answer-head"><b>${esc(run.teams[i].name)}</b><span class="status-badge">${run.locked[i]?'🔒 ANSWER LOCKED':'READY'}</span></div>${control}<button class="btn secondary lock-btn" data-team="${i}" ${run.locked[i]?'style="display:none"':''}>🔒 LOCK ANSWER</button></div>`;
 }
@@ -90,7 +90,14 @@ function bindAnswerEvents(q){
   $$('.answer-select button').forEach(b=>b.onclick=()=>{
     const i=+b.dataset.team;if(run.locked[i])return;
     if(q.type==='multiple-response'){
-      const arr=Array.isArray(run.drafts[i])?[...run.drafts[i]]:[]; const v=b.dataset.val; const p=arr.indexOf(v); if(p>=0)arr.splice(p,1);else arr.push(v); run.drafts[i]=arr.sort(); b.classList.toggle('selected');
+      const arr=Array.isArray(run.drafts[i])?[...run.drafts[i]]:[]; const v=b.dataset.val; const p=arr.indexOf(v);
+      if(p>=0)arr.splice(p,1);
+      else {
+        const required=Number(q.selectionCount||0);
+        if(required>0&&arr.length>=required)return toast(`Pilih tepat ${required} jawaban.`);
+        arr.push(v);
+      }
+      run.drafts[i]=arr.sort(); b.classList.toggle('selected');
     } else {
       run.drafts[i]=b.dataset.val; $$(`.answer-select button[data-team="${i}"]`).forEach(x=>x.classList.toggle('selected',x===b));
     }
@@ -102,7 +109,8 @@ function lockAnswer(i,q){
   if(q.type==='matching'){
     const sels=$$(`.match-select[data-team="${i}"]`); const arr=sels.map(s=>s.value); if(arr.some(v=>!v))return toast('Lengkapi semua pasangan untuk kelompok ini.'); val=arr; run.drafts[i]=arr;
   } else if(q.type==='multiple-response'){
-    if(!Array.isArray(val)||!val.length)return toast('Pilih minimal satu jawaban terlebih dahulu.');
+    const required=Number(q.selectionCount||0);
+    if(!Array.isArray(val)||(required>0?val.length!==required:!val.length))return toast(required>0?`Pilih tepat ${required} jawaban.`:'Pilih jawaban terlebih dahulu.');
   } else if(!val) return toast('Pilih jawaban terlebih dahulu.');
   run.locked[i]=true; saveRun(); const card=$(`#teamAnswer${i}`); card.classList.add('locked'); card.querySelector('.status-badge').textContent='🔒 ANSWER LOCKED'; card.querySelectorAll('.answer-select,.structured,.mini.muted').forEach(x=>x.style.display='none'); card.querySelector('.lock-btn').style.display='none'; updateLockCounter();
 }
