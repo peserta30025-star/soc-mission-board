@@ -4,7 +4,7 @@ import {
   sessionRef, teacherConfigRef, uniqueGameCode, randomPin,
   validateAnswer, currentQuestionKey
 } from './firebase-core.js';
-import { QUESTION_BANK, TEAM_COLORS, flattenQuestions, getQuestion } from './multiplayer-question-bank.js?v=20261010-questionrules1';
+import { QUESTION_BANK, TEAM_COLORS, flattenQuestions, getQuestion } from './multiplayer-question-bank.js?v=20261010-questionrules2';
 
 const $ = (s) => document.querySelector(s);
 const TEAMS = Array.from({length: 6}, (_, i) => ({ id: `team${i+1}`, name: `Kelompok ${i+1}`, color: TEAM_COLORS[i] }));
