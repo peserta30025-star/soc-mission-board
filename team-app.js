@@ -120,18 +120,50 @@ function disableQuestion(){
 
 function renderQuestion(readonly=false){
   if(!question)return;
-  $('#questionTitle').textContent=question.name||'Mission Question';$('#questionText').textContent=question.question||'';
+  $('#questionTitle').textContent=question.name||'Mission Question';
+  $('#questionText').textContent=question.question||'';
+  const instr=$('#questionInstruction');
+  if(instr) instr.textContent=question.instruction||'Diskusikan alasan kelompok dan catat pada LKPD sebelum mengunci jawaban.';
   const area=$('#answerArea');
+  const prior=ownAnswer?.answer;
+
   if(question.type==='matching'){
-    const prior=Array.isArray(ownAnswer?.answer)?ownAnswer.answer:[];
-    area.innerHTML=(question.options||[]).map((label,i)=>`<div class="match-row"><b>${safe(label)}</b><select class="match-select" data-i="${i}" ${readonly?'disabled':''}><option value="">— Pilih pasangan —</option>${(question.matchOptions||[]).map((v,k)=>{const val=String.fromCharCode(65+k);return `<option value="${val}" ${prior[i]===val?'selected':''}>${safe(v)}</option>`;}).join('')}</select></div>`).join('');
-    if(!readonly)area.querySelectorAll('.match-select').forEach(s=>s.onchange=()=>{selected=[...area.querySelectorAll('.match-select')].map(x=>x.value);updateLockButton();});
-  }else{
-    const multi=question.type==='multiple-response';const prior=ownAnswer?.answer;
-    area.innerHTML=(question.options||[]).map((text,i)=>{const val=String.fromCharCode(65+i);const checked=Array.isArray(prior)?prior.includes(val):prior===val;return `<label class="answer-option ${checked?'selected':''}"><input type="${multi?'checkbox':'radio'}" name="answer" value="${val}" ${checked?'checked':''} ${readonly?'disabled':''}><span>${safe(text)}</span></label>`;}).join('');
+    selected=Array.isArray(prior)?[...prior]:selected;
+    area.innerHTML=(question.options||[]).map((label,i)=>`<div class="match-row"><b>${safe(label)}</b><select class="match-select" data-i="${i}" ${readonly?'disabled':''}><option value="">— Pilih pasangan —</option>${(question.matchOptions||[]).map((v,k)=>{const val=String.fromCharCode(65+k);return `<option value="${val}" ${Array.isArray(prior)&&prior[i]===val?'selected':''}>${safe(v)}</option>`;}).join('')}</select></div>`).join('');
+    if(!readonly)area.querySelectorAll('.match-select').forEach(s=>s.onchange=()=>{
+      selected=[...area.querySelectorAll('.match-select')].map(x=>x.value);
+      updateLockButton();
+    });
+  }else if(question.type==='true-false'){
+    selected=prior??selected;
+    const vals=(question.options||['BENAR','SALAH']).map(v=>String(v).toUpperCase());
+    area.innerHTML=vals.map(v=>`<label class="answer-option ${prior===v?'selected':''}"><input type="radio" name="answer" value="${safe(v)}" ${prior===v?'checked':''} ${readonly?'disabled':''}><span>${safe(v)}</span></label>`).join('');
     if(!readonly)area.querySelectorAll('input').forEach(inp=>inp.onchange=()=>{
-      if(multi){selected=[...area.querySelectorAll('input:checked')].map(x=>x.value).sort();}else selected=area.querySelector('input:checked')?.value||null;
-      area.querySelectorAll('.answer-option').forEach(l=>l.classList.toggle('selected',l.querySelector('input').checked));updateLockButton();
+      selected=area.querySelector('input:checked')?.value||null;
+      area.querySelectorAll('.answer-option').forEach(l=>l.classList.toggle('selected',l.querySelector('input').checked));
+      updateLockButton();
+    });
+  }else{
+    const multi=question.type==='multiple-response';
+    const limit=Number(question.selectionCount||0);
+    selected=Array.isArray(prior)?[...prior]:(prior??selected);
+    area.innerHTML=(question.options||[]).map((text,i)=>{
+      const val=String.fromCharCode(65+i);
+      const checked=Array.isArray(prior)?prior.includes(val):prior===val;
+      return `<label class="answer-option ${checked?'selected':''}"><input type="${multi?'checkbox':'radio'}" name="answer" value="${val}" ${checked?'checked':''} ${readonly?'disabled':''}><span>${safe(text)}</span></label>`;
+    }).join('');
+    if(!readonly)area.querySelectorAll('input').forEach(inp=>inp.onchange=()=>{
+      if(multi){
+        let chosen=[...area.querySelectorAll('input:checked')].map(x=>x.value).sort();
+        if(limit>0&&chosen.length>limit){
+          inp.checked=false;
+          chosen=[...area.querySelectorAll('input:checked')].map(x=>x.value).sort();
+          toast(`Pilih tepat ${limit} jawaban.`);
+        }
+        selected=chosen;
+      }else selected=area.querySelector('input:checked')?.value||null;
+      area.querySelectorAll('.answer-option').forEach(l=>l.classList.toggle('selected',l.querySelector('input').checked));
+      updateLockButton();
     });
   }
   $('#lockBtn').disabled=readonly||ownAnswer?.locked||!hasCompleteAnswer();
@@ -139,7 +171,10 @@ function renderQuestion(readonly=false){
 
 function hasCompleteAnswer(){
   if(question?.type==='matching')return Array.isArray(selected)&&selected.length===(question.options||[]).length&&selected.every(Boolean);
-  if(question?.type==='multiple-response')return Array.isArray(selected)&&selected.length>0;
+  if(question?.type==='multiple-response'){
+    const required=Number(question.selectionCount||0);
+    return Array.isArray(selected)&&(required>0?selected.length===required:selected.length>0);
+  }
   return !!selected;
 }
 function updateLockButton(){$('#lockBtn').disabled=!hasCompleteAnswer()||meta?.questionState!=='ANSWERING';}
